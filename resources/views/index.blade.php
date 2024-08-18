@@ -4,7 +4,7 @@
     <div class="container">
         <h1>Queremos ouvir <span>você!</span></h1>
         <div class="buttons">
-            <a href="{{ url('main/criticas') }}">
+            <a href="{{ url('criticas') }}">
                 <button class="btn">
                     <img class="icon" src="{{ asset('assets/critica.svg') }}" alt="Críticas">
                     Críticas
