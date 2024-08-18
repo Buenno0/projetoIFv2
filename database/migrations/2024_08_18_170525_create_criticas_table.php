@@ -13,11 +13,7 @@ return new class extends Migration
     {
         Schema::create('criticas', function (Blueprint $table) {
             $table->id();
-            $table->text('conteudo');
-            $table->timestamp('created_at')->useCurrent();
-            $table->boolean('visible')->default(true);
-            $table->string('modificado_por', 65)->nullable();
-            $table->timestamp('ultima_modificacao')->useCurrent()->useCurrentOnUpdate();
+            $table->timestamps();
         });
     }
 
