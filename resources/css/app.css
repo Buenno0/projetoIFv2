@@ -1,0 +1,14 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+
+
+
+.btn-custom-color {
+    background-color: #007bff; /* Substitua pelo código hexadecimal da cor desejada */
+    color: #fff; /* Cor do texto */
+    border: none; /* Remove a borda padrão se desejar */
+}
+
+.btn-custom-color:hover {
+    background-color: #0056b3; /* Cor de hover */
+}
