@@ -2,34 +2,28 @@
 
 <body>
     <div class="container_criticas">
-        <h1 class="criticas_h1">Avaliações</h1>
+        <h1 class="criticas_h1">{{ __('Avaliações') }}</h1>
         <a href="{{ url('avaliacoes_user') }}">
-            <button class="add-review-button">Adicionar avaliação</button>
+            <button class="add-review-button">{{ __('Adicionar avaliação') }}</button>
         </a>
         <div class="reviews">
             @if($feedbacks->isEmpty())
-                <p>Nenhuma avaliação encontrada.</p>
+                <p>{{ __('Nenhuma avaliação encontrada.') }}</p>
             @else
                 @foreach ($feedbacks as $feedback)
                     @php
-                        $icon = '';
-                        switch ($feedback->feedback) {
-                            case 'bom':
-                                $icon = 'good.svg';
-                                break;
-                            case 'médio':
-                                $icon = 'neutro.svg';
-                                break;
-                            case 'ruim':
-                                $icon = 'bad.svg';
-                                break;
-                        }
+                        $icon = match($feedback->feedback) {
+                            'bom' => 'good.svg',
+                            'médio' => 'neutro.svg',
+                            'ruim' => 'bad.svg',
+                            default => 'default.svg',
+                        };
                     @endphp
 
                     <div class="review">
                         <div class="review-header">
                             <div class="user_name">
-                                <img src="{{ asset('assets/' . $icon) }}" alt="{{ $feedback->feedback }}" class="user-icon">
+                                <img src="{{ asset('assets/' . $icon) }}" alt="{{ __('Feedback') }}: {{ $feedback->feedback }}" class="user-icon">
                                 <span class="nome_span">{{ $feedback->nome }}</span>
                             </div>
                             <span class="date">{{ $feedback->created_at->format('d/m/Y') }}</span>
