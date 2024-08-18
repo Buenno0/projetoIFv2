@@ -28,11 +28,39 @@
                     Avaliações
                 </button>
             </a>
-            <button class="btn" id="denuncia-btn">
-                <img class="icon" src="{{ asset('assets/denuncia.svg') }}" alt="Denúncias">
-                Denúncias
-            </button>
+            <form id="denuncia-form" method="POST" action="{{ url('/save_denuncia') }}">
+                @csrf
+                <button type="submit" class="btn" id="denuncia-btn">
+                    <img class="icon" src="{{ asset('assets/denuncia.svg') }}" alt="Denúncias">
+                    Denúncias
+                </button>
+            </form>
         </div>
     </div>
+    <script>
+        document.getElementById('denuncia-form').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+            var form = this;
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', form.action, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    window.location.href = 'https://falabr.cgu.gov.br/web/home';
+                } else {
+                    alert('Houve um erro.');
+                }
+            };
+            
+            var formData = new FormData(form);
+            var encodedData = [];
+            formData.forEach(function(value, key) {
+                encodedData.push(encodeURIComponent(key) + "=" + encodeURIComponent(value));
+            });
+            xhr.send(encodedData.join('&'));
+        });
+    </script>
 </body>
 </html>

@@ -9,5 +9,5 @@ class Denuncia extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_ip', 'user_agent'];
+    protected $fillable = ['user_agent'];
 }
