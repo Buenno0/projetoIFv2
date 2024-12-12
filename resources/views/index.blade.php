@@ -10,7 +10,7 @@
                     Críticas
                 </button>
             </a>
-            <a href="{{ url('feedback') }}">
+            <a href="{{ url('sugestoes') }}">
                 <button class="btn">
                     <img class="icon" src="{{ asset('assets/sugestoes.svg') }}" alt="Sugestões">
                     Sugestões
@@ -39,9 +39,9 @@
     </div>
     <script>
         document.getElementById('denuncia-form').addEventListener('submit', function(event) {
-            event.preventDefault(); 
+            event.preventDefault();
             var form = this;
-            
+
             var xhr = new XMLHttpRequest();
             xhr.open('POST', form.action, true);
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -53,7 +53,7 @@
                     alert('Houve um erro.');
                 }
             };
-            
+
             var formData = new FormData(form);
             var encodedData = [];
             formData.forEach(function(value, key) {
