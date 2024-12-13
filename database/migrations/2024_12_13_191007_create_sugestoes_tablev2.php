@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('sugestoes', function (Blueprint $table) {
+            $table->id();
+            $table->string('nome', 65)->nullable();
+            $table->string('email', 125);
+            $table->text('conteudo');
+            $table->boolean('visible')->default(true);
+            $table->string('modificado_por', 65)->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('sugestoes_tablev2');
+    }
+};
