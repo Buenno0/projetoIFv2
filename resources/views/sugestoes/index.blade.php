@@ -1,27 +1,28 @@
 @include('includes.header')
 <body>
     <div class="container_criticas">
-        <h1 class="criticas_h1">{{ __('Críticas') }}</h1>
-        <a href="{{ url('avaliacoes_user') }}">
-            <button class="add-review-button">{{ __('Adicionar crítica') }}</button>
+        <h1 class="criticas_h1">{{ __('Sugestões') }}</h1>
+        <a href="{{ url('sugestoes_user') }}">
+            <button class="add-review-button">{{ __('Adicionar sugestão') }}</button>
         </a>
         <div class="reviews">
-            @if($criticas->isEmpty())
-                <p>{{ __('Nenhuma crítica encontrada.') }}</p>
+            @if($sugestoes->isEmpty())
+                <p>{{ __('Nenhuma sugestão encontrada.') }}</p>
             @else
-                @foreach ($criticas as $critica)
+                @foreach ($sugestoes as $sugestao)
                     <div class="review">
                         <div class="review-header">
                             <div class="user_name">
                                 <img src="{{ asset('assets/user_icognite.svg') }}" alt="user" class="user-icon">
+                                <span class="nome_span">{{ $sugestao->nome }}</span>
                             </div>
-                            <span class="date">{{ $critica->created_at->format('d/m/Y') }}</span>
+                            <span class="date">{{ $sugestao->created_at->format('d/m/Y') }}</span>
                         </div>
-                        <p class="texto">{{ $critica->conteudo }}</p>
+                        <p class="texto">{{ $sugestao->conteudo }}</p>
                     </div>
                 @endforeach
             @endif
         </div>
     </div>
 </body>
-</html>
+

@@ -2,7 +2,7 @@
 <body>
     <div class="container_criticas">
         <h1 class="criticas_h1">{{ __('Críticas') }}</h1>
-        <a href="{{ url('avaliacoes_user') }}">
+        <a href="{{ url('criticas_user') }}">
             <button class="add-review-button">{{ __('Adicionar crítica') }}</button>
         </a>
         <div class="reviews">

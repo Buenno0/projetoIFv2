@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('sugestoes', function (Blueprint $table) {
             $table->id();
+            $table->string('nome', 65);
+            $table->string('email', 125);
+            $table->text('conteudo');
+            $table->boolean('visible')->default(true);
+            $table->string('modificado_por', 65)->nullable();
             $table->timestamps();
         });
     }
@@ -25,3 +30,4 @@ return new class extends Migration
         Schema::dropIfExists('sugestoes');
     }
 };
+

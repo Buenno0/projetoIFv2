@@ -59,7 +59,7 @@
                                 successBanner.classList.remove('visible');
                                 submitButton.disabled = false;
                                 form.reset();
-                                window.location.href = 'obrigado.html'; // Redirecionamento após sucesso
+                                window.location.href = '{{ route('obrigado') }}';
                             }, 2000);
                         } else {
                             errorBanner.innerHTML = data.message || 'Erro ao enviar crítica. Tente novamente.';
