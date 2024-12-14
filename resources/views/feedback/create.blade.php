@@ -3,7 +3,7 @@
 <body>
     <div class="container">
         <h1>Deixe sua Avaliação</h1>
-        <form id="feedbackForm" action="{{ route('feedback.emoji') }}" method="post">
+        <form id="feedbackForm" action="{{ route('feedback.store') }}" method="post">
             @csrf
 
             <label for="nome">Nome (opcional):</label>

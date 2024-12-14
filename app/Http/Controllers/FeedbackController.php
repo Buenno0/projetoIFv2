@@ -28,42 +28,43 @@ class FeedbackController extends Controller
         return view('feedback.emoji');
     }
 
-    public function store(Request $request)
+    public function processForm(Request $request)
     {
         // Validação dos campos
         $request->validate([
-            'feedback' => 'required|string',  // Feedback selecionado
-            'nome' => 'nullable|string|max:50',  // Nome opcional
-            'avaliacao' => 'nullable|string|max:255',  // Avaliação opcional
+            'nome' => 'nullable|string|max:50',
+            'avaliacao' => 'required|string|max:255',
         ]);
-    
-        // Verifique se o feedback já foi enviado anteriormente (opcional)
-        if ($request->session()->has('feedbackSubmitted')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Feedback já enviado anteriormente.'
-            ]);
-        }
-    
+
+        // Armazenar os dados em sessão para uso na próxima página
+        $request->session()->put('feedback', $request->only(['nome', 'avaliacao']));
+
+        // Redirecionar para a página de escolha da experiência
+        return redirect()->route('feedback.emoji');
+    }
+
+    public function submitExperience(Request $request)
+    {
+        // Validação da escolha da experiência
+        $request->validate([
+            'feedback' => 'required|in:ruim,medio,bom'
+        ]);
+
+        // Recuperar os dados armazenados na sessão
+        $feedbackData = $request->session()->get('feedback');
+
         // Criar o feedback
         Feedback::create([
             'feedback' => $request->feedback,  // Feedback (ruim, médio, bom)
-            'nome' => $request->nome,  // Nome (opcional)
-            'avaliacao' => $request->avaliacao,  // Avaliação (opcional)
+            'nome' => $feedbackData['nome'],  // Nome (opcional)
+            'conteudo' => $feedbackData['avaliacao'],  // Avaliação
             'visible' => true,  // Define se o feedback será visível ou não
         ]);
-    
+
         // Marcar o feedback como enviado (para evitar duplicação)
         $request->session()->put('feedbackSubmitted', true);
-    
-        return response()->json([
-            'success' => true,
-            'message' => 'Feedback enviado com sucesso!'
-        ]);
+
+        // Redirecionar para a página de agradecimento
+        return response()->json(['success' => true]);
     }
-    
-    
-
-
-
 }

@@ -5,15 +5,15 @@
         <h1>Deixe sua avaliação</h1>
         <div class="buttons">
             <button class="btn" id="ruim">
-                <img class="icon" src="/ProjetoIf/assets/bad.svg" alt="ruim">
+                <img class="icon" src="{{ asset('assets/bad.svg') }}" alt="ruim">
                 Ruim
             </button>
-            <button class="btn" id="médio">
-                <img class="icon" src="/ProjetoIf/assets/neutro.svg" alt="medio">
+            <button class="btn" id="medio">
+                <img class="icon" src="{{ asset('assets/neutro.svg') }}" alt="medio">
                 Médio
             </button>
             <button class="btn" id="bom">
-                <img class="icon" src="/ProjetoIf/assets/good.svg" alt="bom">
+                <img class="icon" src="{{ asset('assets/good.svg') }}" alt="bom">
                 Bom
             </button>
         </div>
@@ -38,10 +38,12 @@
                 buttons.forEach(btn => btn.classList.remove('selected'));
                 button.classList.add('selected');
                 selectedFeedback = button.id;
+                console.log('Feedback selecionado:', selectedFeedback);  // Log para depuração
             });
         });
 
         addFeedbackButton.addEventListener('click', () => {
+            console.log('Feedback a ser enviado:', selectedFeedback);  // Log para depuração
             if (selectedFeedback) {
                 addFeedbackButton.classList.add('disabled');
 
@@ -51,7 +53,7 @@
                 formData.append('nome', '');  // Se for um campo de nome opcional, pode ser vazio
                 formData.append('avaliacao', '');  // Aqui você pode adicionar a avaliação se desejar
 
-                fetch("{{ route('feedback.store') }}", {  // Rota do Laravel para processar a avaliação
+                fetch("{{ route('feedback.submitExperience') }}", {  // Rota do Laravel para processar a avaliação
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -65,7 +67,7 @@
                         localStorage.setItem('feedbackSubmitted', 'true');
                         setTimeout(() => {
                             successBanner.classList.remove('visible');
-                            window.location.href = 'obrigado.html';  // Redirecionamento após sucesso
+                            window.location.href = "{{ route('obrigado') }}";  // Redirecionamento após sucesso
                         }, 3000);
                     } else if (data.message === 'Feedback já enviado anteriormente.') {
                         duplicateBanner.classList.add('visible');

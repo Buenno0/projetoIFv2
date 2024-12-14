@@ -14,7 +14,7 @@
                     @php
                         $icon = match($feedback->feedback) {
                             'bom' => 'good.svg',
-                            'médio' => 'neutro.svg',
+                            'medio' => 'neutro.svg',
                             'ruim' => 'bad.svg',
                             default => 'default.svg',
                         };
@@ -24,7 +24,7 @@
                         <div class="review-header">
                             <div class="user_name">
                                 <img src="{{ asset('assets/' . $icon) }}" alt="{{ __('Feedback') }}: {{ $feedback->feedback }}" class="user-icon">
-                                <span class="nome_span">{{ $feedback->nome }}</span>
+                                <span>{{ $feedback->nome ?? __('Anônimo') }}</span>
                             </div>
                             <span class="date">{{ $feedback->created_at->format('d/m/Y') }}</span>
                         </div>

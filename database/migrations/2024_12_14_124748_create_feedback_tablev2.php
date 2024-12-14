@@ -3,7 +3,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFeedbackTable extends Migration
+class CreateFeedbackTablev2 extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class CreateFeedbackTable extends Migration
     {
         Schema::create('feedback', function (Blueprint $table) {
             $table->id();
-            $table->string('nome', 65);
+            $table->string('nome', 65)->nullable();
             $table->string('feedback', 10);
             $table->text('conteudo');
             $table->timestamp('created_at')->useCurrent();

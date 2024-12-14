@@ -14,13 +14,7 @@
                         <div class="review-header">
                             <div class="user_name">
                                 <img src="{{ asset('assets/user_icognite.svg') }}" alt="user" class="user-icon">
-                                <span class="nome_span">
-                                    @if($sugestao && $sugestao->nome)
-                                        {{ $sugestao->nome }}
-                                    @else
-                                        Anônimo
-                                    @endif
-                                </span>
+                                <span class="nome_span">{{ $sugestao->nome ?? __('Anônimo') }}</span>
                             </div>
                             <span class="date">{{ $sugestao->created_at->format('d/m/Y') }}</span>
                         </div>
