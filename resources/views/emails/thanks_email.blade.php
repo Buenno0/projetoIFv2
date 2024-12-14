@@ -71,7 +71,11 @@
     <p>Sua sugestão foi recebida com sucesso. Aqui estão os detalhes:</p>
 
     <div class="details">
-        <p><span class="highlight">Nome:</span> {{ $sugestao->nome }}</p>
+        @if ($sugestao->nome)
+            <p><span class="highlight">Nome:</span> {{ $sugestao->nome }}</p>
+            @else
+            <p><span class="highlight">Nome:</span> Anônimo</p>
+        @endif
         <p><span class="highlight">E-mail:</span> {{ $sugestao->email }}</p>
         <p><span class="highlight">Conteúdo:</span> {{ $sugestao->conteudo }}</p>
     </div>
