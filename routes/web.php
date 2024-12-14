@@ -33,3 +33,8 @@ Route::post('/feedback_emoji', [FeedbackController::class, 'submitExperience'])-
 
 // Denúncias
 Route::post('/save_denuncia', [DenunciaController::class, 'store']);
+
+// Contatos
+Route::get('/contatos', function () {
+    return view('contatos.index');
+});

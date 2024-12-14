@@ -16,7 +16,7 @@
                     Sugestões
                 </button>
             </a>
-            <a href="{{ url('main/contatos') }}">
+            <a href="{{ url('contatos') }}">
                 <button class="btn">
                     <img class="icon" src="{{ asset('assets/contatos.svg') }}" alt="Contatos">
                     Contatos
