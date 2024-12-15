@@ -3,7 +3,8 @@
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
     <div class="container d-flex justify-content-center align-items-center min-vh-100" style="min-height: 80vh;">
-        <div class="card shadow-lg p-5 rounded-4" style="max-width: 500px; width: 100%;">
+            <div class="card shadow-lg p-5 rounded-4 px-4" style="max-width: 500px; width: 100%;">
+
             <!-- Logo -->
             <div class="text-center mb-4">
                 <img src="{{ asset('assets/ifsp_logo_itp.png') }}" alt="Logo" style="max-width: 150px; height: 18vh;">
@@ -52,10 +53,10 @@
                     </div>
 
                     <!-- Login Button -->
-                    <x-primary-button class="btn btn-primary w-100 py-2" id="btn-entrar" style="border-radius: 8px; height: 55px;">
+                    <x-primary-button class="btn btn-primary py-2 mx-4" id="btn-entrar" style="border-radius: 8px; height: 55px; width: calc(100% - 32px);">
                         {{ __('Entrar') }}
                     </x-primary-button>
-
+                    
                     <!-- Forgot Password Link (now below the button) -->
                     <div id="fg-password" class="text-center mt-3">
                         @if (Route::has('password.request'))
