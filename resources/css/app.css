@@ -1,6 +1,7 @@
 @import "bootstrap/dist/css/bootstrap.min.css";
-
-
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
 
 .btn-custom-color {
@@ -12,3 +13,5 @@
 .btn-custom-color:hover {
     background-color: #0056b3; /* Cor de hover */
 }
+
+

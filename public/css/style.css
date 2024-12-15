@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Slab:wght@100..900&display=swap');
 :root {
     --green--if: #008000; /* Verde do if */
     --white--if: #ffffff; /* Branco */
@@ -415,3 +416,87 @@ body.instituto-federal {
     color: var(--text--primary);
     opacity: 0.9;
 }
+
+#btn-entrar {
+    background-color: var(--green--if);
+    color: var(--white--if);
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#btn-entrar:hover {
+    background-color: var(--hover--btn);
+}
+
+#btn-entrar:disabled {
+    background-color: var(--grey--if);
+    color: var(--text--primary);
+    cursor: not-allowed;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    background-color: var(--grey--if);
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+#forgot-password {
+    color: var(--text--primary);
+    font-size: 0.6rem;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Adicionando em seu arquivo style.css ou dentro de <style> */
+.login-card .form-control {
+    padding: 1rem; /* Aumenta o preenchimento dos campos */
+    font-size: 1.1rem; /* Aumenta o tamanho da fonte */
+    border-radius: 8px; /* Mantém o raio das bordas */
+}
+
+#btn-entrar {
+    font-size: 1.1rem; /* Aumenta o tamanho da fonte do botão */
+    padding: 1rem; /* Aumenta o padding do botão */
+    height: 55px; /* Aumenta a altura do botão */
+}
+
+.login-card .mb-4 {
+    margin-bottom: 1.5rem; /* Aumenta o espaçamento entre os campos */
+}
+
+#wlcm {
+    font-size: 1.5rem; /* Aumenta o tamanho da fonte */
+    margin-bottom: 1.5rem; /* Aumenta o espaçamento entre o texto e o formulário */
+    font-weight: 600;
+    font-family: "Roboto Slab", serif;
+    color: var(--green--if);
+}
+
+
+.input-focused:focus {
+    border-color: #007bff; /* Cor da borda */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Efeito de brilho */
+}
+
+.mb-2{
+    margin-top: 1rem;
+}
+
+#fg-password {
+    font-size: 1rem;
+    color: var(--text--primary);
+    text-decoration: underline;
+    cursor: pointer;
+    margin-bottom: 5vh;
+}
+
+
+
+ 
