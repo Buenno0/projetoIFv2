@@ -12,4 +12,5 @@ return [
     |
     */
     'default_library' => 'Chartjs',
+    
 ];

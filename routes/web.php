@@ -6,6 +6,7 @@ use App\Http\Controllers\CriticaController;
 use App\Http\Controllers\SugestoesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReportController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -46,6 +47,11 @@ Route::get('/contatos', function () {
 Route::get('/dashboard', function () {
     return view('dashboard.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard/report-chart', [DashboardController::class, 'reportChart'])->name('dashboard.reportChart');
+Route::get('/dashboard/report-chart', [ReportController::class, 'index'])->name('dashboard.reportChart');
+
+
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -57,7 +63,9 @@ Route::get('/dashboard', [DashboardController::class, 'showDashboard'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
-Route::get('/current-time', 'TimeController@getCurrentTime');
+Route::get('/report-chart', [ReportController::class, 'index']);
+
+
 
 
 require __DIR__.'/auth.php';

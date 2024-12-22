@@ -28,9 +28,8 @@ class DashboardController extends Controller
         return view('dashboard.index', ['greeting' => $greeting]);
     }
 
-    public function getCurrentTime()
+    public function reportChart()
     {
-        $currentTime = Carbon::now()->toTimeString();
-        return response()->json(['time' => $currentTime]);
+        return view('dashboard.report-chart');
     }
 }

@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="utf-8">
     <title>Sidebar with Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Krub:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -371,12 +372,31 @@
   
 }
 
+#chart-container {
+    width: 100%;
+    height: 400px; /* Ajuste conforme necessário */
+    margin: 0 auto;
+}
 
+canvas {
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
 .clock {
   width: 1.8rem; /* Ajuste o tamanho do ícone conforme necessário */
   height: auto;
   margin-right: 0.2rem; /* Ajuste conforme necessário */
 }
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  margin-top: 5rem;
+}
+
+
 
 /* Responsividade */
 @media (max-width: 768px) {
@@ -506,6 +526,16 @@
             </a>
             </div>
         </div>
+        {{-- @include('dashboard.report-chart') --}}
+
+        {{-- <div style="width: 50%; margin: auto;">
+          {!! $chart->container() !!}
+      </div>
+  
+      {!! $chart->script() !!} --}}
+      <div class="chart-container">
+      <img src="{{'assets/image.png'}}" alt="">
+      </div>
     </main>
     <script>
         const expandBtn = document.querySelector('.expand-btn');
