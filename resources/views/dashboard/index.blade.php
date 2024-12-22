@@ -386,6 +386,10 @@
   .welcome {
     display: none;
   }
+
+  .nav{
+    display: none;
+  }
 }
 
     </style>
