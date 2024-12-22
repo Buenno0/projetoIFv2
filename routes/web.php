@@ -5,6 +5,7 @@ use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\CriticaController;
 use App\Http\Controllers\SugestoesController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -42,7 +43,6 @@ Route::get('/contatos', function () {
     return view('contatos.index');
 });
 
-
 Route::get('/dashboard', function () {
     return view('dashboard.index');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -53,5 +53,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/dashboard', [DashboardController::class, 'showDashboard'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 require __DIR__.'/auth.php';
