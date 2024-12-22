@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Sidebar with Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Krub:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -298,37 +299,95 @@
 
         }
 
-
-        .welcome {
-            margin-top: 1rem;
-            font-size: 2rem;
-            color: #333;
-            text-align: center;
+        .tip{
+          display: flex;
+          align-items: center;
         }
 
-        .wlcm_name {
-            color: var(--primary-color);
-        }
 
-        .welcome-sub {
-            margin-top: 0.7rem;
-            font-size: 1rem;
-            color: #333;
-            font-family: "Krub", serif;
-          font-weight: 400;
-          font-style: italic; 
-            
-        }
+        .idea-img {
+  margin-right: 1rem; /* Ajuste conforme necessário */
+  width: 50px; /* Ajuste conforme necessário */
+  height: auto; /* Mantém a proporção da imagem */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
 
-        @media (max-width: 768px) {
-            .card {
-                flex: 1 1 100%;
-            }
-            .welcome {
-                display: none;
-            }
+}
 
-        }
+        .idea-img:hover {
+  transform: scale(1.1);
+}
+
+
+
+.wlcm_name {
+  color: var(--primary-color);
+}
+
+.welcome-sub {
+  margin-top: 0.7rem;
+  font-size: 1rem;
+  color: #333;
+  font-family: "Krub", serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+
+
+
+      
+
+.div-wlcm {
+  display: flex;
+  align-items: center; /* Alinha o texto e o ícone verticalmente */
+  justify-content: space-between; /* Coloca o texto no centro e o ícone no canto direito */
+  gap: 1rem; /* Espaçamento entre o texto e o ícone */
+  width: 100%; /* Garante que o container ocupe toda a largura */
+}
+
+.welcome {
+  font-size: 2rem;
+  color: #333;
+  text-align: center;
+  flex-grow: 1; /* Faz com que o texto ocupe o espaço disponível */
+}
+
+.clock-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4.9rem; /* Ajuste o tamanho conforme necessário */
+  height: 2.7rem; /* Ajuste o tamanho conforme necessário */
+  background-color: white;
+  border-radius: 17px; /* Borda arredondada */
+  padding: 1rem; /* Espaçamento interno */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-family: "Krub", serif;
+  font-weight:500;
+  font-size: 1rem;
+  color: #333;
+  font-style: italic;
+  
+}
+
+
+.clock {
+  width: 1.8rem; /* Ajuste o tamanho do ícone conforme necessário */
+  height: auto;
+  margin-right: 0.2rem; /* Ajuste conforme necessário */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .card {
+    flex: 1 1 100%;
+  }
+  .welcome {
+    display: none;
+  }
+}
+
     </style>
 </head>
 <body>
@@ -407,8 +466,20 @@
       </div>
   </nav>
     <main>
-      <h1 class="welcome">{{ $greeting }}, <span class="wlcm_name"> {{ Auth::user()->name }}!</span></h1>
+      <header>
+  <div class="div-wlcm">
+    <h1 class="welcome">{{ $greeting }}, <span class="wlcm_name"> {{ Auth::user()->name }}!</span></h1>
+    <div class="clock-btn">
+      <img class="clock" src="{{asset('assets/clock.svg')}}" alt="clock">
+      <div class="hours" id="hours"></div>
+
+    </div>
+  </div>
+</header>
+
+    
       <div class="tip">
+        <img class="idea-img" src="{{asset('assets/idea.svg')}}" alt="ideia">
       <h2 class="welcome-sub">Nesta área, você pode acessar feedbacks, enviar e-mails, alterar configurações, adicionar novos usuários e excluir usuários existentes. Aproveite todas as funcionalidades disponíveis para gerenciar sua aplicação de forma eficiente e segura.</h2>
       </div>
         <div class="dashboard">
@@ -439,6 +510,20 @@
         expandBtn.addEventListener('click', () => {
             body.classList.toggle('collapsed');
         });
+
+       function updateClock() {
+            var now = new Date();
+            var hours = now.getHours();
+            var minutes = now.getMinutes();
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            var timeString = hours + ':' + minutes;
+            document.getElementById('hours').textContent = timeString;
+        }
+
+        // Atualiza o relógio a cada segundo
+        setInterval(updateClock, 1000);
+        // Inicializa o relógio imediatamente
+        updateClock();
     </script>
 </body>
 </html>

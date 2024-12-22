@@ -27,4 +27,10 @@ class DashboardController extends Controller
         $greeting = $this->getGreeting();
         return view('dashboard.index', ['greeting' => $greeting]);
     }
+
+    public function getCurrentTime()
+    {
+        $currentTime = Carbon::now()->toTimeString();
+        return response()->json(['time' => $currentTime]);
+    }
 }

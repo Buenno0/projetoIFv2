@@ -57,4 +57,7 @@ Route::get('/dashboard', [DashboardController::class, 'showDashboard'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
+Route::get('/current-time', 'TimeController@getCurrentTime');
+
+
 require __DIR__.'/auth.php';
