@@ -3,6 +3,7 @@
 <body>
     <div class="container">
         <h1>Queremos ouvir <span>você!</span></h1>
+        
         <div class="buttons">
             <a href="{{ url('criticas') }}">
                 <button class="btn">
