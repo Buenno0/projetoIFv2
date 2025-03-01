@@ -1,18 +1,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Slab:wght@100..900&display=swap');
 :root {
-    --green--if: #008000; /* Verde do if */
-    --white--if: #ffffff; /* Branco */
-    --grey--if: #f9f9f9;  /* Cinza claro */
-    --black--if: #000000; /* Preto */
-    --border--if: #ccc;   /* Cinza para borda */
-    --text--primary: #555; /* Cor primária do texto */
-    --hover--bg: #f0f0f0; /* Cor de fundo no hover */
-    --hover--btn: #45a049; /* Cor de fundo no hover do botão */
-    --error: red; /* Cor de erro */
-    --success: #4CAF50; /* Cor de sucesso */
+    --primary-color: #B1141F;
+    --primary-dark: #8e1019;
+    --primary-light: #d41a27;
+    --secondary-color: #c62a38;
+    --accent-color: #e63946;
+    --text-color: #333;
+    --light-text: #666;
+    --background: #f8f9fa;
+    --card-bg: #fff;
+    --shadow: 0 4px 12px rgba(177, 20, 31, 0.1);
+    --border-radius: 12px;
+    --transition: all 0.3s ease;
+    --text: #EDF0F7;
+    --sidebar-gray-light: #F8F7FD;
+    --sidebar-gray-background: rgba(255, 255, 255, 0.1);
+    --success: #00C896;
+    --white: #fff; 
+    --gradient-red: linear-gradient(to right, #8e1019, #B1141F, #c62a38, #d41a27, #e63946);      
 }
-
 * {
     margin: 0;
     padding: 0;

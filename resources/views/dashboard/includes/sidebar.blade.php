@@ -13,6 +13,15 @@
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 </head>
 <body class="collapsed">
+  <div class="sidebar-overlay"></div>
+  <div class="hamburger-menu">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+  
   <nav>
     <div class="sidebar-top">
       <a href="#" class="logo__wrapper">
@@ -91,25 +100,74 @@
   <script>
    
 
-   document.addEventListener('DOMContentLoaded', function() {
+//    document.addEventListener('DOMContentLoaded', function() {
+//   const expandBtn = document.querySelector('.expand-btn');
+//   const body = document.querySelector('body');
+  
+//   // Toggle da sidebar
+//   expandBtn.addEventListener('click', () => {
+//     body.classList.toggle('collapsed');
+//   });
+  
+//   // Função para ajustar automaticamente em telas menores
+//   function checkScreenSize() {
+//     if (window.innerWidth <= 768) {
+//       body.classList.add('collapsed');
+//     }
+//   }
+  
+//   // Verificar tamanho ao redimensionar
+//   window.addEventListener('resize', checkScreenSize);
+// });
+
+document.addEventListener('DOMContentLoaded', function() {
   const expandBtn = document.querySelector('.expand-btn');
   const body = document.querySelector('body');
+  const hamburgerMenu = document.querySelector('.hamburger-menu');
   
-  // Toggle da sidebar
+  // Toggle da sidebar no desktop
   expandBtn.addEventListener('click', () => {
     body.classList.toggle('collapsed');
   });
+  
+  // Toggle da sidebar no mobile
+  hamburgerMenu.addEventListener('click', () => {
+    body.classList.toggle('sidebar-open');
+  });
+  
   
   // Função para ajustar automaticamente em telas menores
   function checkScreenSize() {
     if (window.innerWidth <= 768) {
       body.classList.add('collapsed');
+      body.classList.remove('sidebar-open');
     }
   }
+  // Adicione ao seu JavaScript
+const overlay = document.querySelector('.sidebar-overlay');
+overlay.addEventListener('click', () => {
+  body.classList.remove('sidebar-open');
+});
+
+  
+  // Fechar sidebar ao clicar em um link (para mobile)
+  const sidebarLinks = document.querySelectorAll('.sidebar-links a');
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 768) {
+        body.classList.remove('sidebar-open');
+      }
+    });
+  });
   
   // Verificar tamanho ao redimensionar
   window.addEventListener('resize', checkScreenSize);
+  
+  // Verificar tamanho inicial
+  checkScreenSize();
 });
+
+
 
 
 
