@@ -21,8 +21,6 @@ class LoginRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
      */
     public function rules(): array
     {
@@ -33,9 +31,19 @@ class LoginRequest extends FormRequest
     }
 
     /**
+     * Get custom error messages.
+     */
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'O campo email é obrigatório.',
+            'email.email' => 'Por favor, insira um email válido.',
+            'password.required' => 'O campo senha é obrigatório.',
+        ];
+    }
+
+    /**
      * Attempt to authenticate the request's credentials.
-     *
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function authenticate(): void
     {
@@ -45,7 +53,7 @@ class LoginRequest extends FormRequest
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'email' => 'Email ou senha incorretos. Verifique suas credenciais e tente novamente.',
             ]);
         }
 
@@ -54,8 +62,6 @@ class LoginRequest extends FormRequest
 
     /**
      * Ensure the login request is not rate limited.
-     *
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function ensureIsNotRateLimited(): void
     {
@@ -80,6 +86,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->input('email')).'|'.$this->ip());
     }
 }

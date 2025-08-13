@@ -1,4 +1,5 @@
 @include('includes.header')
+<link rel="stylesheet" href="{{ asset('css/style.css') }}">
 <body>
     <div class="container_criticas">
         <h1 class="criticas_h1">{{ __('Críticas') }}</h1>
