@@ -24,26 +24,27 @@ class AuthenticatedSessionController extends Controller
      * Handle an incoming authentication request.
      */
     public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
-        ], [
-            'email.required' => 'O campo email é obrigatório.',
-            'email.email' => 'Por favor, insira um email válido.',
-            'password.required' => 'O campo senha é obrigatório.',
-        ]);
+{
+    $request->validate([
+        'email' => ['required', 'string', 'email'],
+        'password' => ['required', 'string'],
+    ], [
+        'email.required' => 'O campo email é obrigatório.',
+        'email.email' => 'Por favor, insira um email válido.',
+        'password.required' => 'O campo senha é obrigatório.',
+    ]);
 
-        if (! Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
-            throw ValidationException::withMessages([
-                'email' => 'Email ou senha incorretos. Verifique suas credenciais e tente novamente.',
-            ]);
-        }
-
-        $request->session()->regenerate();
-
-        return redirect()->intended(RouteServiceProvider::HOME);
+    if (! Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
+        return back()->withErrors([
+            'email' => 'Email ou senha incorretos. Verifique suas credenciais e tente novamente.',
+        ])->withInput($request->only('email'));
     }
+
+    $request->session()->regenerate();
+
+    return redirect()->intended(RouteServiceProvider::HOME);
+}
+
 
     /**
      * Destroy an authenticated session.
