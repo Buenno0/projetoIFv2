@@ -7,14 +7,14 @@ use App\Http\Controllers\SugestoesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportController;
-
-
 use Illuminate\Support\Facades\Route;
 
+// Página inicial
 Route::get('/', function () {
     return view('index');
 });
 
+// Página de obrigado
 Route::get('/obrigado', function () {
     return response()->file(public_path('obrigado.html'));
 })->name('obrigado');
@@ -32,9 +32,9 @@ Route::post('/criticas_user', [CriticaController::class, 'store'])->name('critic
 // Feedback
 Route::get('/feedback', [FeedbackController::class, 'index']);
 Route::get('/feedback_user', [FeedbackController::class, 'create'])->name('feedback.create');
-Route::post('/feedback_user', [FeedbackController::class, 'processForm'])->name('feedback.store'); // Mudança para processForm
-Route::get('/feedback_emoji', [FeedbackController::class, 'show'])->name('feedback.emoji'); // Mudança para show
-Route::post('/feedback_emoji', [FeedbackController::class, 'submitExperience'])->name('feedback.submitExperience'); // Nova rota para processar a experiência
+Route::post('/feedback_user', [FeedbackController::class, 'processForm'])->name('feedback.store');
+Route::get('/feedback_emoji', [FeedbackController::class, 'show'])->name('feedback.emoji');
+Route::post('/feedback_emoji', [FeedbackController::class, 'submitExperience'])->name('feedback.submitExperience');
 
 // Denúncias
 Route::post('/save_denuncia', [DenunciaController::class, 'store']);
@@ -44,28 +44,26 @@ Route::get('/contatos', function () {
     return view('contatos.index');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard.index');
-})->middleware(['auth', 'verified'])->name('dashboard');
-Route::get('/dashboard/report-chart', [DashboardController::class, 'reportChart'])->name('dashboard.reportChart');
-Route::get('/dashboard/report-chart', [ReportController::class, 'index'])->name('dashboard.reportChart');
+// Rotas protegidas por login e (opcionalmente) e-mail verificado
+Route::middleware(['auth', 'verified'])->group(function () {
 
+    // Dashboard principal
+    Route::get('/dashboard', [DashboardController::class, 'showDashboard'])
+        ->name('dashboard');
 
+    // Relatórios no dashboard
+    Route::get('/dashboard/report-chart', [DashboardController::class, 'reportChart'])
+        ->name('dashboard.reportChart');
 
+    // Se quiser rota /report-chart separada mas protegida
+    Route::get('/report-chart', [ReportController::class, 'index'])
+        ->name('report.chart');
 
-Route::middleware('auth')->group(function () {
+    // Perfil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'showDashboard'])
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
-
-Route::get('/report-chart', [ReportController::class, 'index']);
-
-
-
-
+// Rotas de autenticação Breeze
 require __DIR__.'/auth.php';

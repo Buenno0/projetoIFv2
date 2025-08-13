@@ -35,7 +35,6 @@ $sugestao = Sugestoes::create([
 'conteudo' => $request->sugestao,
 'nome' => $request->nome,
 'email' => $request->email,
-'user_id' => auth()->id(), // assumindo que você tem autenticação de usuário
 'visible' => true, // ou defina o valor padrão na migration
 ]);
 
