@@ -10,9 +10,8 @@
                 <img src="{{ asset('assets/ifsp_logo_itp.png') }}" alt="Logo">
             </div>
             
-<form method="POST" action="{{ route('login') }}" id="loginForm" novalidate>
-    @csrf
-
+<form method="POST" action="{{ route('login') }}" class="app-form" id="loginForm">
+        @csrf
     <!-- Email Address -->
     <div class="input-group">
         <label for="email" class="input-label">{{ __('Email') }}</label>
@@ -42,8 +41,7 @@
             id="password" 
             class="form-control password-input @error('password') error @enderror" 
             type="password"
-            name="password" 
-            required 
+            name="password"  
             autocomplete="current-password"
             placeholder="Digite sua senha"
         />
@@ -93,174 +91,11 @@
 </form>
 
         </div>
+        
     </div>
-
-    <!-- JavaScript -->
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 Login script carregado');
-    
-    // Verificar se há erros do servidor
-    const serverErrors = document.querySelectorAll('.input-error');
-    serverErrors.forEach((error, index) => {
-        if (error.textContent.trim()) {
-            console.log(`❌ Erro ${index + 1}:`, error.textContent.trim());
-            error.style.display = 'block';
-            error.style.backgroundColor = '#fef2f2';
-            error.style.padding = '8px 12px';
-            error.style.borderRadius = '6px';
-            error.style.border = '1px solid #fecaca';
-        }
-    });
-
-    // Elementos
-    const form = document.getElementById('loginForm');
-    const emailInput = document.getElementById('email');
-    const passwordInput = document.getElementById('password');
-    const togglePassword = document.getElementById('togglePassword');
-    const eyeIcon = document.querySelector('.eye-icon');
-    const eyeOffIcon = document.querySelector('.eye-off-icon');
-    const submitBtn = document.getElementById('btn-entrar');
-    const btnText = document.querySelector('.btn-text');
-    const loadingSpinner = document.querySelector('.loading-spinner');
-
-    // Toggle password visibility - CÓDIGO ÚNICO E CORRIGIDO
-    if (togglePassword && eyeIcon && eyeOffIcon) {
-        console.log('👁️ Inicializando toggle de senha');
-        
-        // Estado inicial: senha oculta
-        eyeIcon.style.display = 'block';
-        eyeOffIcon.style.display = 'none';
-        
-        togglePassword.addEventListener('click', function() {
-            console.log('👁️ Toggle clicado');
-            const currentType = passwordInput.getAttribute('type');
-            const newType = currentType === 'password' ? 'text' : 'password';
-            
-            passwordInput.setAttribute('type', newType);
-            
-            if (newType === 'text') {
-                // Senha visível - mostrar olho cortado
-                console.log('👀 Mostrando senha');
-                eyeIcon.style.display = 'none';
-                eyeOffIcon.style.display = 'block';
-            } else {
-                // Senha oculta - mostrar olho normal
-                console.log('🙈 Ocultando senha');
-                eyeIcon.style.display = 'block';
-                eyeOffIcon.style.display = 'none';
-            }
-        });
-    } else {
-        console.log('❌ Elementos do toggle não encontrados');
-    }
-
-    // Funções de validação
-    function validateEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    function showError(inputElement, errorElement, message) {
-        console.log('🔴 Mostrando erro:', message);
-        inputElement.classList.add('error');
-        errorElement.textContent = message;
-        errorElement.style.display = 'block';
-        errorElement.style.backgroundColor = '#fef2f2';
-        errorElement.style.padding = '8px 12px';
-        errorElement.style.borderRadius = '6px';
-        errorElement.style.border = '1px solid #fecaca';
-        errorElement.style.marginTop = '8px';
-    }
-
-    function clearError(inputElement, errorElement) {
-        inputElement.classList.remove('error');
-        errorElement.textContent = '';
-        errorElement.style.display = 'none';
-    }
-
-    // Validação em tempo real
-    if (emailInput) {
-        emailInput.addEventListener('blur', function() {
-            const emailError = document.getElementById('email-error');
-            const email = this.value.trim();
-            
-            if (email && !validateEmail(email)) {
-                showError(this, emailError, 'Por favor, insira um email válido');
-            } else if (!emailError.textContent.includes('incorretos')) {
-                clearError(this, emailError);
-            }
-        });
-
-        emailInput.addEventListener('input', function() {
-            const emailError = document.getElementById('email-error');
-            if (this.classList.contains('error') && !emailError.textContent.includes('incorretos')) {
-                clearError(this, emailError);
-            }
-        });
-    }
-
-    if (passwordInput) {
-        passwordInput.addEventListener('input', function() {
-            const passwordError = document.getElementById('password-error');
-            if (this.classList.contains('error') && !passwordError.textContent.includes('obrigatório')) {
-                clearError(this, passwordError);
-            }
-        });
-    }
-
-    // Form submission
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            console.log('📝 Formulário enviado');
-            
-            const emailError = document.getElementById('email-error');
-            const passwordError = document.getElementById('password-error');
-            let hasErrors = false;
-
-            // Validar email
-            const email = emailInput.value.trim();
-            if (!email) {
-                showError(emailInput, emailError, 'O email é obrigatório');
-                hasErrors = true;
-            } else if (!validateEmail(email)) {
-                showError(emailInput, emailError, 'Por favor, insira um email válido');
-                hasErrors = true;
-            }
-
-            // Validar senha
-            const password = passwordInput.value;
-            if (!password) {
-                showError(passwordInput, passwordError, 'A senha é obrigatória');
-                hasErrors = true;
-            }
-
-            if (hasErrors) {
-                console.log('❌ Formulário com erros, prevenindo envio');
-                e.preventDefault();
-                return;
-            }
-
-            // Loading state
-            if (submitBtn && btnText && loadingSpinner) {
-                submitBtn.disabled = true;
-                btnText.style.display = 'none';
-                loadingSpinner.style.display = 'flex';
-            }
-        });
-    }
-
-    // Remover loading se houver erros do servidor
-    if (document.querySelector('.input-error:not(:empty)')) {
-        console.log('🔄 Removendo loading devido a erros do servidor');
-        if (submitBtn && btnText && loadingSpinner) {
-            submitBtn.disabled = false;
-            btnText.style.display = 'inline';
-            loadingSpinner.style.display = 'none';
-        }
-    }
-});
-</script>
-
-
 </x-guest-layout>
+<script src="{{ asset('js/form-handler.js') }}"></script>
+
+    
+
+

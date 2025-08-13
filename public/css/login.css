@@ -113,7 +113,6 @@ h2#wlcm {
     line-height: 1.4;
 }
 .input-error:not(:empty) {
-    display: block;
     animation: fadeInError 0.3s ease-out;
     padding: 8px 12px;
     background: #fef2f2;
@@ -192,6 +191,7 @@ h2#wlcm {
 .form-check-input:checked {
     background-color: #26b851;
     border-color: #26b851;
+    color: #fff;
 }
 .form-check-label {
     font-size: 0.95rem;
