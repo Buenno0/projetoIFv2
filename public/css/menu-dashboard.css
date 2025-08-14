@@ -1,0 +1,133 @@
+/* RESET MODERNO */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f5f6fa;
+    color: #333;
+}
+
+/* CONTAINERS E CARD */
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+.card {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.card-header {
+    background: #0069d9;
+    color: white;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.card-header h4 {
+    font-size: 1.2rem;
+}
+.badge {
+    background: white;
+    color: #0069d9;
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-weight: bold;
+}
+.card-body {
+    padding: 20px;
+}
+
+/* EMPTY STATE */
+.empty-state {
+    text-align: center;
+    color: #888;
+}
+.empty-state i {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+/* TABELA */
+.table-wrapper {
+    overflow-x: auto;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+thead {
+    background: #f0f0f0;
+}
+th, td {
+    text-align: left;
+    padding: 12px;
+}
+tr:hover {
+    background: #f9f9f9;
+}
+.text-right {
+    text-align: right;
+}
+
+/* BOTÕES */
+.btn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-success {
+    background: #28a745;
+    color: white;
+}
+.btn-success:hover { background: #218838; }
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+.btn-danger:hover { background: #c82333; }
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+.btn-secondary:hover { background: #5a6268; }
+
+/* MODAL */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+.modal.show {
+    display: flex;
+}
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+.modal-actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: space-between;
+}

@@ -19,51 +19,62 @@ Route::get('/obrigado', function () {
     return response()->file(public_path('obrigado.html'));
 })->name('obrigado');
 
-// Sugestões
+// Sugestões (públicas)
 Route::get('/sugestoes', [SugestoesController::class, 'index']);
 Route::get('/sugestoes_user', [SugestoesController::class, 'create'])->name('sugestoes.create');
 Route::post('/sugestoes_user', [SugestoesController::class, 'store'])->name('sugestoes.store');
 
-// Críticas
+// Críticas (públicas)
 Route::get('/criticas', [CriticaController::class, 'index']);
 Route::get('/criticas_user', [CriticaController::class, 'create'])->name('criticas.create');
 Route::post('/criticas_user', [CriticaController::class, 'store'])->name('criticas.store');
 
-// Feedback
+// Feedback (público)
 Route::get('/feedback', [FeedbackController::class, 'index']);
 Route::get('/feedback_user', [FeedbackController::class, 'create'])->name('feedback.create');
 Route::post('/feedback_user', [FeedbackController::class, 'processForm'])->name('feedback.store');
 Route::get('/feedback_emoji', [FeedbackController::class, 'show'])->name('feedback.emoji');
 Route::post('/feedback_emoji', [FeedbackController::class, 'submitExperience'])->name('feedback.submitExperience');
 
-// Denúncias
+// Denúncias (público)
 Route::post('/save_denuncia', [DenunciaController::class, 'store']);
 
-// Contatos
+// Contatos (público)
 Route::get('/contatos', function () {
     return view('contatos.index');
 });
 
-// Rotas protegidas por login e (opcionalmente) e-mail verificado
-Route::middleware(['auth', 'verified'])->group(function () {
+// Protegido apenas por login
+Route::middleware(['auth'])->group(function () {
 
-    // Dashboard principal
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'showDashboard'])
         ->name('dashboard');
 
-    // Relatórios no dashboard
+    // Sugestões no dashboard
+    Route::get('/dashboard/sugestoes', [DashboardController::class, 'sugestoesDashboard'])
+    ->name('dashboard.sugestoes');
+
+Route::delete('/sugestoes/{id}', [SugestoesController::class, 'destroy'])
+    ->name('sugestoes.destroy');
+
+Route::get('/sugestoes/{id}/responder', [SugestoesController::class, 'responder'])
+    ->name('sugestoes.responder');
+
+
+
+    // Relatório dentro do dashboard
     Route::get('/dashboard/report-chart', [DashboardController::class, 'reportChart'])
         ->name('dashboard.reportChart');
 
-    // Se quiser rota /report-chart separada mas protegida
-    Route::get('/report-chart', [ReportController::class, 'index'])
-        ->name('report.chart');
-
-    // Perfil
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Rota de relatório pública (fora do dashboard, opcional)
+Route::get('/report-chart', [ReportController::class, 'index'])->name('report.chart');
 
 // Rotas de autenticação Breeze
 require __DIR__.'/auth.php';
