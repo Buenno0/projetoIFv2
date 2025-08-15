@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('denuncias', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-            $table->string('user_agent');
+        Schema::table('sugestoes', function (Blueprint $table) {
+            $table->string('email', 125)->nullable(true)->change();
         });
     }
 
@@ -23,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('denuncias');
+        Schema::table('sugestoes', function (Blueprint $table) {
+            //
+        });
     }
 };

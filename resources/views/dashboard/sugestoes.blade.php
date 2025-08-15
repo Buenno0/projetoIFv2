@@ -1,12 +1,5 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <link rel="stylesheet" href="{{ asset('css/menu-dashboard.css') }}">
-    <title>Sugestões Recebidas</title>
-</head>
 
 @include('dashboard.includes.sidebar')
 
@@ -38,6 +31,8 @@
                                     <th>Mensagem</th>
                                     <th>Autor</th>
                                     <th>Data</th>
+                                    <th>Respondido</th>
+
                                     <th class="text-right">Ações</th>
                                 </tr>
                             </thead>
@@ -48,6 +43,14 @@
                                         <td>{{ Str::limit($sugestao->conteudo, 50) }}</td>
                                         <td>{{ $sugestao->nome ?? 'Anônimo' }}</td>
                                         <td>{{ $sugestao->created_at->format('d/m/Y H:i') }}</td>
+                                        <td>
+    @if($sugestao->respondido)
+        <x-bi-check-circle-fill class="text-success" width="18" height="18" aria-label="Respondido"/> Respondido
+    @else
+        <x-bi-x-circle-fill class="text-danger" width="18" height="18" aria-label="Não respondido"/> Não respondido
+    @endif
+</td>
+
                                         <td class="text-right">
                                             <a href="{{ route('sugestoes.responder', $sugestao->id) }}" class="btn btn-success">
                                                 <i class="fa-solid fa-reply"></i> Responder

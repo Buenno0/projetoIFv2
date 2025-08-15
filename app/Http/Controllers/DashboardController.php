@@ -38,7 +38,7 @@ class DashboardController extends Controller
         $greeting = $this->getGreeting();
 
         // Buscar as sugestões mais recentes (por exemplo, últimas 10)
-        $sugestoes = Sugestoes::latest()->take(100)->get();
+        $sugestoes = Sugestoes::latest()->get();
 
         // Retorna para resources/views/dashboard/sugestoes.blade.php
         return view('dashboard.sugestoes', [

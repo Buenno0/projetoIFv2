@@ -25,8 +25,8 @@
   <nav>
     <div class="sidebar-top">
       <a href="#" class="logo__wrapper">
-        <img src="{{ asset('assets/fatec_logo.jpeg') }}" class="logo" alt="IFSP">
-        <h1 class="hide">FATEC</h1>
+        <img src="{{ asset('assets/ifsp_logo_itp.png') }}" class="logo" alt="IFSP">
+        <h1 class="hide">IFSP</h1>
       </a>
       
       <div class="expand-btn">
@@ -36,10 +36,10 @@
     <div class="sidebar-links">
         <ul>
           <li>
-            <a href="#dashboard" title="Dashboard" class="tooltip">
+            <a href="{{route('dashboard.sugestoes')}}" title="Dashboard" class="tooltip">
               <img src="{{asset('assets/review.svg')}}" alt="Dashboard">
-              <span class="link hide">Avaliações</span>
-              <span class="tooltip__content">Avaliações</span>
+              <span class="link hide">Sugestões</span>
+              <span class="tooltip__content">Sugestões</span>
             </a>
           </li>
           <li>
