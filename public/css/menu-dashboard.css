@@ -102,25 +102,16 @@ body {
     margin-bottom: 8px;
 }
 
-/* TABELA */
-.table-wrapper {
-    overflow-x: auto;
+.text-danger {
+    color: var(--error);
+    font-weight: bold;
 }
-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.95rem;
+
+.text-success {
+    color: var(--success);
+    font-weight: bold;
 }
-thead {
-    background: #f0f0f0;
-}
-th, td {
-    text-align: left;
-    padding: 12px;
-}
-tr:hover {
-    background: #f9f9f9;
-}
+
 .text-right {
     text-align: right;
 }
@@ -178,4 +169,97 @@ tr:hover {
     margin-top: 16px;
     display: flex;
     justify-content: space-between;
+}
+
+/* GRID DE CARDS */
+.sugestoes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+/* CARD INDIVIDUAL */
+.sugestao-card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition);
+}
+.sugestao-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* HEADER DO CARD */
+.sugestao-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--light-text);
+    margin-bottom: 8px;
+}
+.sugestao-index {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* CONTEÚDO */
+.sugestao-conteudo {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    color: var(--text-color);
+}
+
+/* AUTOR */
+.sugestao-autor {
+    font-size: 0.85rem;
+    color: var(--light-text);
+    margin-bottom: 8px;
+}
+
+/* STATUS */
+.sugestao-status {
+    font-size: 0.85rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+/* AÇÕES DO CARD */
+.sugestao-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.icon-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    line-height: 0;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/* Hover com leve zoom */
+.icon-btn:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+    color: var(--primary-color);
+}
+
+/* Efeito ao clicar (apertar) */
+.icon-btn:active {
+    transform: scale(0.9);
+    filter: brightness(0.9);
+}
+
+/* Cor diferenciada para o botão apagar */
+.delete-btn:hover {
+    filter: brightness(1.2) sepia(1) hue-rotate(-20deg) saturate(5);
 }

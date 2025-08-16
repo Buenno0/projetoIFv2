@@ -4,48 +4,68 @@ namespace App\Http\Controllers;
 
 use App\Models\Sugestoes;
 use Illuminate\Http\Request;
-use App\Jobs\EnviarSugestaoEmail;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Carbon;
 
 class SugestoesController extends Controller
 {
-public function index()
-{
-$sugestoes = Sugestoes::where('visible', true)
-->orderBy('created_at', 'desc')
-->get();
+    public function index()
+    {
+        $sugestoes = Sugestoes::where('visible', true)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-return view('sugestoes.index', compact('sugestoes'));
-}
+        return view('sugestoes.index', compact('sugestoes'));
+    }
 
-public function create()
-{
-return view('sugestoes.create');
-}
+    public function create()
+    {
+        return view('sugestoes.create');
+    }
 
-public function store(Request $request)
-{
-// Validação
-$request->validate([
-'sugestao' => 'required|string|max:1000', // Alterar para o nome correto
-'email' => 'required|email', // Validação do e-mail
-]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'sugestao' => 'required|string|max:1000',
+            'email' => 'required|email',
+        ]);
 
-// Criar a sugestão
-$sugestao = Sugestoes::create([
-'conteudo' => $request->sugestao,
-'nome' => $request->nome,
-'email' => $request->email,
-'visible' => true, // ou defina o valor padrão na migration
-]);
+        $sugestao = Sugestoes::create([
+            'conteudo' => $request->sugestao,
+            'nome' => $request->nome ?? 'Anônimo',
+            'email' => $request->email,
+            'visible' => true,
+        ]);
 
-// Despachar a job para enviar o e-mail
-EnviarSugestaoEmail::dispatch($sugestao);
+        return response()->json([
+            'success' => true,
+            'message' => 'Sugestão adicionada com sucesso!',
+            'data' => $sugestao,
+        ]);
+    }
 
-// Retorno de sucesso em formato JSON
-return response()->json([
-'success' => true,
-'message' => 'Sugestão adicionada com sucesso!',
-'data' => $sugestao, // Retorne os dados da sugestão, se necessário
-]);
-}
+    // NOVO: Soft delete via AJAX
+    public function destroy(Request $request, $id)
+    {
+        $sugestao = Sugestoes::find($id);
+
+        if (!$sugestao || !$sugestao->visible) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Sugestão não encontrada ou já excluída.',
+            ], 404);
+        }
+
+        $sugestao->visible = false;
+        $sugestao->deleted_at = Carbon::now();
+        $sugestao->id_user_deleted = Auth::id();
+
+        $sugestao->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sugestão removida (soft delete) com sucesso.',
+            'id' => (int) $sugestao->id,
+        ]);
+    }
 }

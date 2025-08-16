@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 
+
 // Página inicial
 Route::get('/', function () {
     return view('index');
@@ -55,11 +56,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/sugestoes', [DashboardController::class, 'sugestoesDashboard'])
     ->name('dashboard.sugestoes');
 
-Route::delete('/sugestoes/{id}', [SugestoesController::class, 'destroy'])
-    ->name('sugestoes.destroy');
 
 Route::get('/sugestoes/{id}/responder', [SugestoesController::class, 'responder'])
     ->name('sugestoes.responder');
+
+
+
+Route::delete('/sugestoes/{id}', [SugestoesController::class, 'destroy'])->name('sugestoes.destroy');
+
 
 
 

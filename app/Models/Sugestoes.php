@@ -17,10 +17,20 @@ class Sugestoes extends Model
         'conteudo',
         'respondido',
         'data_resposta',
+        'id_user_responded',
+        'respondido_por',
         'deleted_at',
-        'visibile',
+        'id_user_deleted',
+        'visible',
         'modificado_por',
         'created_at',
         'updated_at',
+    ];
+
+    protected $casts = [
+        'respondido' => 'boolean',
+        'visible'    => 'boolean',
+        'data_resposta' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 }
