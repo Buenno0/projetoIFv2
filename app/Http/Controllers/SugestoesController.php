@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sugestoes;
+use App\Models\Sugestao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
@@ -11,12 +11,21 @@ class SugestoesController extends Controller
 {
     public function index()
     {
-        $sugestoes = Sugestoes::where('visible', true)
+        $sugestoes = Sugestao::where('visible', true)
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('sugestoes.index', compact('sugestoes'));
     }
+
+    // public function indexDashboard()
+    // {
+    //     $sugestoes = Sugestoes::visiveis()
+    //         ->orderBy('created_at', 'desc')
+    //         ->get();
+
+    //     return view('dashboard.sugestoes', compact('sugestoes'));
+    // }
 
     public function create()
     {
@@ -30,7 +39,7 @@ class SugestoesController extends Controller
             'email' => 'required|email',
         ]);
 
-        $sugestao = Sugestoes::create([
+        $sugestao = Sugestao::create([
             'conteudo' => $request->sugestao,
             'nome' => $request->nome ?? 'Anônimo',
             'email' => $request->email,
@@ -47,7 +56,7 @@ class SugestoesController extends Controller
     // NOVO: Soft delete via AJAX
     public function destroy(Request $request, $id)
     {
-        $sugestao = Sugestoes::find($id);
+        $sugestao = Sugestao::find($id);
 
         if (!$sugestao || !$sugestao->visible) {
             return response()->json([

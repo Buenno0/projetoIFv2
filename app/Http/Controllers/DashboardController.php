@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sugestoes;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use App\Models\Sugestao; // Model das sugestões (ajuste o nome se for diferente)
+use App\Models\Sugestao;
 
 class DashboardController extends Controller
 {
@@ -37,14 +36,16 @@ class DashboardController extends Controller
     {
         $greeting = $this->getGreeting();
 
-        // Buscar as sugestões mais recentes (por exemplo, últimas 10)
-        $sugestoes = Sugestoes::latest()->get();
+        // Se o escopo for local, a assinatura correta é scopeVisiveis no modelo.
+        // No PHP, você chama como ->visiveis()
+        $sugestoes = Sugestao::visiveis()
+            ->latest()
+            ->take(10) // se quiser as 10 mais recentes
+            ->get();
 
-        // Retorna para resources/views/dashboard/sugestoes.blade.php
         return view('dashboard.sugestoes', [
-            'greeting'   => $greeting,
-            'sugestoes'  => $sugestoes
-
+            'greeting'  => $greeting,
+            'sugestoes' => $sugestoes,
         ]);
     }
 }

@@ -188,6 +188,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     transition: var(--transition);
+    gap: 6px;
 }
 .sugestao-card:hover {
     transform: translateY(-3px);
@@ -262,4 +263,16 @@ body {
 /* Cor diferenciada para o botão apagar */
 .delete-btn:hover {
     filter: brightness(1.2) sepia(1) hue-rotate(-20deg) saturate(5);
+}
+
+.answer{
+    
+    color: var(--light-text);
+
+}
+
+.sugestao-data {
+ font-size: 0.8rem;
+
+    
 }

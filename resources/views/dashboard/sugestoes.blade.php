@@ -49,20 +49,21 @@
                                     <strong>Autor:</strong> {{ $sugestao->nome ?? 'Anônimo' }}
                                 </div>
 
-                                <div class="sugestao-status">
+                                    <div class="sugestao-status">
                                     @if($sugestao->respondido)
                                         <x-bi-check-circle-fill class="text-success" width="18" height="18"/>
-                                        Respondido por:
-                                        {{ Str::limit(explode(' ', $sugestao->respondido_por->name ?? 'Desconhecido')[0], 15) }}
-                                        em:
-                                        <span class="sugestao-data">
-                                            {{ $sugestao->data_resposta?->format('d/m/Y H:i') }}
-                                        </span>
+                                        <i>
+                                            <b class="answer">Respondido por:</b>
+                                            <b>{{ Str::limit(explode(' ', $sugestao->respondido_por->name ?? 'Desconhecido')[0], 15) }}</b>
+                                            <b class="answer">em:</b>
+                                            <b class="sugestao-data">{{ $sugestao->data_resposta?->format('d/m/Y H:i') }}</b>
+                                        </i>
                                     @else
                                         <x-bi-x-circle-fill class="text-danger" width="18" height="18"/>
-                                        <p>Não respondido</p>
+                                        <i><p>Não respondido</p></i>
                                     @endif
                                 </div>
+
 
                                 <div class="sugestao-actions">
                                     <!-- Botão visualizar/responder -->
@@ -77,6 +78,7 @@
                                              height="24">
                                     </button>
 
+                                    @if($sugestao->respondido)
                                     <!-- Botão apagar (abre modal) -->
                                     <button type="button"
                                         onclick="abrirModal('{{ route('sugestoes.destroy', $sugestao->id) }}', {{ $sugestao->id }})"
@@ -88,6 +90,7 @@
                                              width="24"
                                              height="24">
                                     </button>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach

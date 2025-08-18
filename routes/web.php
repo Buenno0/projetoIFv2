@@ -56,6 +56,8 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/sugestoes', [DashboardController::class, 'sugestoesDashboard'])
     ->name('dashboard.sugestoes');
 
+    
+
 
 Route::get('/sugestoes/{id}/responder', [SugestoesController::class, 'responder'])
     ->name('sugestoes.responder');
