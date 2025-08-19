@@ -268,11 +268,14 @@ body {
 .answer{
     
     color: var(--light-text);
-
+        font-weight: lighter;
 }
 
 .sugestao-data {
  font-size: 0.8rem;
+ 
+}
 
-    
+b.sugestao-data {
+    text-decoration: underline;
 }

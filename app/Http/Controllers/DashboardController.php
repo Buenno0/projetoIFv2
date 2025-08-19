@@ -32,20 +32,28 @@ class DashboardController extends Controller
         return view('dashboard.report-chart');
     }
 
-    public function sugestoesDashboard()
-    {
-        $greeting = $this->getGreeting();
+   public function sugestoesDashboard(\Illuminate\Http\Request $request)
+{
+    $greeting = $this->getGreeting();
 
-        // Se o escopo for local, a assinatura correta é scopeVisiveis no modelo.
-        // No PHP, você chama como ->visiveis()
-        $sugestoes = Sugestao::visiveis()
-            ->latest()
-            ->take(10) // se quiser as 10 mais recentes
-            ->get();
+    $query = \App\Models\Sugestao::visiveis()->latest();
 
-        return view('dashboard.sugestoes', [
-            'greeting'  => $greeting,
-            'sugestoes' => $sugestoes,
-        ]);
+    if ($request->boolean('apenas_nao_respondidas')) {
+        $query->where(function ($q) {
+            $q->where('respondido', false)->orWhereNull('respondido');
+        });
     }
+
+    $sugestoes = $query->get();
+    $totalGeral = \App\Models\Sugestao::visiveis()->count();
+
+    return view('dashboard.sugestoes', [
+        'greeting'             => $greeting,
+        'sugestoes'            => $sugestoes,
+        'apenasNaoRespondidas' => $request->boolean('apenas_nao_respondidas'),
+        'totalGeral'           => $totalGeral,
+    ]);
+}
+
+
 }

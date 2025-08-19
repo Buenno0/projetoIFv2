@@ -20,6 +20,7 @@ class Sugestao extends Model
         'respondido',
         'data_resposta',
         'id_user_responded',
+        'respondido_por', // se for relacionamento, use 'respondido_por_id' e defina o relacionamento no modelo
         // 'respondido_por', // se for string/nome direto e precisar preencher, mantenha
         'id_user_deleted',
         'visible',
@@ -42,6 +43,13 @@ class Sugestao extends Model
     {
         return $query->where('visible', true);
     }
+
+    public function scopeNaoRespondidas($q)
+    {
+        return $q->where(function($q){
+        $q->where('respondido', false)->orWhereNull('respondido');
+    });
+}
 
     
 
