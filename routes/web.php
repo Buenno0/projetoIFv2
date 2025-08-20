@@ -24,7 +24,7 @@ Route::get('/obrigado', function () {
 })->name('obrigado');
 
 // Sugestões (públicas)
-Route::get('/sugestoes', [SugestoesController::class, 'index']);
+Route::get('/sugestoes', [SugestoesController::class, 'show'])->name('sugestoes.show');
 Route::get('/sugestoes_user', [SugestoesController::class, 'create'])->name('sugestoes.create');
 Route::post('/sugestoes_user', [SugestoesController::class, 'store'])->name('sugestoes.store');
 

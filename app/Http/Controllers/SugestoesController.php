@@ -10,6 +10,15 @@ use Carbon\Carbon;
 
 class SugestoesController extends Controller
 {
+
+     public function show()
+    {
+        $sugestoes = Sugestao::where('visible', true)
+            ->orderBy('created_at', 'desc')
+            ->get();
+            return view('sugestoes.index', compact('sugestoes'));
+    }
+
     public function index(Request $request)
 {
     $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
@@ -102,6 +111,32 @@ class SugestoesController extends Controller
         ]);
     }
 
+       public function create()
+    {
+        return view('sugestoes.create');
+    }
 
-    // responder(), destroy() etc. permanecem como estão
+    public function store(Request $request)
+    {
+        $request->validate([
+            'sugestao' => 'required|string|max:1000',
+            'email' => 'required|email',
+        ]);
+
+        $sugestao = Sugestao::create([
+            'conteudo' => $request->sugestao,
+            'nome' => $request->nome ?? 'Anônimo',
+            'email' => $request->email,
+            'visible' => true,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sugestão adicionada com sucesso!',
+            'data' => $sugestao,
+        ]);
+    }
+
+
+
 }
