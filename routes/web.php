@@ -8,6 +8,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
+use OwenIt\Auditing\Auditor;
+use OwenIt\Auditing\Models\Audit;
+
 
 
 // Página inicial
@@ -58,6 +61,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard/sugestoes/json', [\App\Http\Controllers\SugestoesController::class, 'indexJson'])
     ->name('dashboard.sugestoes.json');
+
+    Route::get('/auditorias', function () {
+    $audits = Audit::with(['user', 'auditable'])->latest()->get();
+    return view('auditorias.index', compact('audits'));
+});
 
 
     

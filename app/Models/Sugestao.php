@@ -5,14 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 
-class Sugestao extends Model
+class Sugestao extends Model implements AuditableContract
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $table = 'sugestoes';
 
-    // Campos preenchíveis via mass assignment
     protected $fillable = [
         'nome',
         'email',
@@ -20,15 +21,12 @@ class Sugestao extends Model
         'respondido',
         'data_resposta',
         'id_user_responded',
-        'respondido_por', // se for relacionamento, use 'respondido_por_id' e defina o relacionamento no modelo
-        // 'respondido_por', // se for string/nome direto e precisar preencher, mantenha
+        'respondido_por',
         'id_user_deleted',
         'visible',
         'modificado_por',
-        // NÃO incluir created_at/updated_at/deleted_at aqui
     ];
 
-    // Casts de tipos
     protected $casts = [
         'respondido'    => 'boolean',
         'visible'       => 'boolean',
@@ -38,7 +36,15 @@ class Sugestao extends Model
         'updated_at'    => 'datetime',
     ];
 
-    // Escopo local para filtrar visíveis
+    protected static function booted()
+{
+    static::updating(function ($sugestao) {
+        if ($sugestao->isDirty('visible') && $sugestao->visible === false) {
+            $sugestao->id_user_deleted = auth()->id();
+        }
+    });
+}
+
     public function scopeVisiveis(Builder $query): Builder
     {
         return $query->where('visible', true);
@@ -46,12 +52,21 @@ class Sugestao extends Model
 
     public function scopeNaoRespondidas($q)
     {
-        return $q->where(function($q){
-        $q->where('respondido', false)->orWhereNull('respondido');
-    });
-}
+        return $q->where(function($q) {
+            $q->where('respondido', false)
+              ->orWhereNull('respondido');
+        });
+    }
 
-    
-
-   
+    /**
+     * Adiciona informações extras ao log de auditoria
+     */
+    public function getAuditMetadata(): array
+    {
+        return [
+            'ip_address' => request()->ip(),
+            'url'        => request()->fullUrl(),
+            'user_agent' => request()->header('User-Agent'),
+        ];
+    }
 }
