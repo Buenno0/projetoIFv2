@@ -56,6 +56,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard/sugestoes', [DashboardController::class, 'sugestoesDashboard'])
     ->name('dashboard.sugestoes');
 
+    Route::get('/dashboard/sugestoes/json', [\App\Http\Controllers\SugestoesController::class, 'indexJson'])
+    ->name('dashboard.sugestoes.json');
+
+
     
 
 
