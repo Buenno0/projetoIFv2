@@ -9,7 +9,14 @@
 
 <div class="container">
     <h1 class="mb-4">Logs de Auditoria</h1>
+    <p class="mb-4">Esta página exibe os logs de auditoria do sistema, incluindo eventos de criação, atualização e exclusão de registros.</p>
+    <p class="mb-4">Você pode baixar os logs em formato JSON clicando no botão abaixo:</p>
+    <a href="{{ route('audits.download') }}" class="btn btn-success mb-3">
+    📥 Baixar Logs (JSON)
+</a>
+    <p class="text-muted mb-4">Total de registros: {{ $audits->count() }}</p>
 
+    {{-- Tabela de auditorias --}}
     <table class="table table-striped table-bordered align-middle">
         <thead class="table-dark">
             <tr>

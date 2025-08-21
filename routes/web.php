@@ -7,6 +7,7 @@ use App\Http\Controllers\SugestoesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\AuditController;
 use Illuminate\Support\Facades\Route;
 use OwenIt\Auditing\Auditor;
 use OwenIt\Auditing\Models\Audit;
@@ -48,7 +49,6 @@ Route::get('/contatos', function () {
     return view('contatos.index');
 });
 
-// Protegido apenas por login
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard
@@ -57,19 +57,20 @@ Route::middleware(['auth'])->group(function () {
 
     // Sugestões no dashboard
     Route::get('/dashboard/sugestoes', [DashboardController::class, 'sugestoesDashboard'])
-    ->name('dashboard.sugestoes');
+        ->name('dashboard.sugestoes');
 
     Route::get('/dashboard/sugestoes/json', [\App\Http\Controllers\SugestoesController::class, 'indexJson'])
-    ->name('dashboard.sugestoes.json');
+        ->name('dashboard.sugestoes.json');
 
+    // Auditorias (listagem)
     Route::get('/auditorias', function () {
-    $audits = Audit::with(['user', 'auditable'])->latest()->get();
-    return view('auditorias.index', compact('audits'));
-});
+        $audits = Audit::with(['user', 'auditable'])->latest()->get();
+        return view('auditorias.index', compact('audits'));
+    })->name('auditorias.index');
 
-
-    
-
+    // Auditorias (download JSON)
+    Route::get('/audits/download', [AuditController::class, 'download'])
+        ->name('audits.download');
 
 Route::get('/sugestoes/{id}/responder', [SugestoesController::class, 'responder'])
     ->name('sugestoes.responder');
