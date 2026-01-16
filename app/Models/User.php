@@ -8,43 +8,27 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-// importa o contrato de auditoria
 use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
+use OwenIt\Auditing\Auditable;
+use App\Traits\AuditoriaAvancada; 
 
 class User extends Authenticatable implements AuditableContract
 {
     use HasApiTokens, HasFactory, Notifiable;
+    
+    // 1. USE SIMPLES (Sem conflitos, pois mudamos o nome na Trait)
+    use Auditable, AuditoriaAvancada;
 
-    // adiciona o trait de auditoria
-    use \OwenIt\Auditing\Auditable;
+    protected $fillable = ['name', 'email', 'password'];
+    protected $hidden = ['password', 'remember_token'];
+    protected $casts = ['email_verified_at' => 'datetime'];
+    protected $auditExclude = ['password', 'remember_token'];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    // 2. IMPLEMENTAÇÃO DA INTERFACE
+    // Essa função é obrigatória pelo AuditableContract.
+    // Aqui nós apenas repassamos o trabalho para a nossa Trait.
+    public function transformAudit(array $data): array
+    {
+        return $this->gerarMetadadosAuditoria($data);
+    }
 }
