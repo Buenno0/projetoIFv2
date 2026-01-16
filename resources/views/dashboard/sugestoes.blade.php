@@ -1,390 +1,349 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Sugestões</title>
+@extends('layouts.admin')
 
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+@section('title', 'Sugestões Recebidas')
 
-    <link rel="stylesheet" href="{{ asset('css/menu-dashboard.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/fontawesome.css') }}">
+@section('content')
+    <div class="dashboard-card">
+        
+        <div class="dashboard-header">
+    <div class="header-title">
+        <i class="fa-solid fa-lightbulb"></i> 
+        Sugestões Recebidas
 
-</head>
-<body>
+        <div class="tooltip-wrapper">
+            <i class="fa-solid fa-circle-info help-icon"></i>
+            <div class="tooltip-content">
+                <strong>Nota:</strong> As informações aqui são resumidas. 
+                Sugestões já respondidas não podem receber novas respostas.
+            </div>
+        </div>
+        
+    </div> <div class="header-controls">
+        </div>
+    
 
-@include('dashboard.includes.sidebar')
-
-<main class="main-content p-4">
-    @include('dashboard.includes.header')
-
-    <div class="container">
-        <div class="card">
-            @php
-                $soNaoRespondidas = isset($apenasNaoRespondidas)
-                    ? (bool) $apenasNaoRespondidas
-                    : request()->boolean('apenas_nao_respondidas');
-
-                $rotaBase = route('dashboard.sugestoes');
-                $contagemAtual = $sugestoes->count();
-            @endphp
-
-            <div class="card-header" style="display:flex; align-items:center; gap:12px;">
-                <h4 style="margin:0; display:flex; align-items:center; gap:8px;">
-                    <i class="fa-solid fa-lightbulb"></i>
-                    Sugestões Recebidas
-                </h4>
-
-                <div style="margin-left:auto; display:flex; gap:12px; align-items:center;">
-                    <span id="label-toggle">{{ $soNaoRespondidas ? 'Apenas não respondidas' : 'Todas' }}</span>
+            <div class="header-controls">
+                <div class="toggle-wrapper" title="Filtrar apenas itens pendentes">
+                    <span id="label-toggle" style="font-weight: 600; font-size: 0.9rem;">
+                        {{ $apenasNaoRespondidas ? 'Pendentes' : 'Todas' }}
+                    </span>
                     <label class="switch">
-                        <input type="checkbox" id="toggle-respondidas" {{ $soNaoRespondidas ? 'checked' : '' }}>
+                        <input type="checkbox" id="toggle-respondidas" {{ $apenasNaoRespondidas ? 'checked' : '' }}>
                         <span class="slider"></span>
                     </label>
                 </div>
 
-                <span class="badge" id="badge-total">
-                    Total: {{ $contagemAtual }}@if(isset($totalGeral)) / {{ $totalGeral }} @endif
+                <span class="badge-total" id="badge-total">
+                    {{ $sugestoes->total() }} registros
                 </span>
             </div>
+        </div>
 
-            <div class="card-body">
-                <div id="filtros-extras" style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
-                    <input type="text" id="busca" placeholder="Buscar por texto..." class="form-control" style="max-width:280px;">
-                    <select id="per-page" class="form-select" style="width:auto;">
-                        <option value="8">8</option>
-                        <option value="12" selected>12</option>
-                        <option value="24">24</option>
-                    </select>
-                </div>
+        <div class="toolbar">
+            <div class="search-wrapper" style="position: relative; flex-grow: 1; max-width: 400px;">
+                <i class="fa-solid fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8;"></i>
+                <input type="text" id="busca" placeholder="Buscar por conteúdo, ID ou nome..." class="form-control" style="padding-left: 38px; width: 100%;">
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 0.85rem; color: #666;">Exibir:</span>
+                <select id="per-page" class="form-select" style="width: auto; min-width: 80px;">
+                    <option value="8">8</option>
+                    <option value="12" selected>12</option>
+                    <option value="24">24</option>
+                </select>
+            </div>
+        </div>
 
-                <div id="loader" class="spinner" style="display:none;"></div>
+        <div class="content-area">
+            
+            <div id="skeleton-grid" class="sugestoes-grid" style="display:none;">
+                @for($i = 0; $i < 4; $i++)
+                    <div class="skeleton-card">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                            <div class="skeleton skeleton-text" style="width: 40px;"></div>
+                            <div class="skeleton skeleton-text" style="width: 80px;"></div>
+                        </div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-text"></div>
+                        <div class="skeleton skeleton-title"></div>
+                        <div style="margin-top: 20px; display:flex; justify-content:space-between; align-items:center;">
+                            <div style="display:flex; gap:10px; align-items:center;">
+                                <div class="skeleton skeleton-avatar"></div>
+                                <div class="skeleton skeleton-text" style="width: 100px; margin:0;"></div>
+                            </div>
+                            <div class="skeleton skeleton-avatar"></div>
+                        </div>
+                    </div>
+                @endfor
+            </div>
 
+            <div class="sugestoes-grid" id="sugestoes-grid">
+                @forelse($sugestoes as $sugestao)
+                    <div class="sugestao-card" id="sugestao-card-{{ $sugestao->id }}">
+                        <div class="card-top">
+                            <span class="card-id">#{{ $sugestao->id }}</span>
+                            <span>{{ optional($sugestao->created_at)->format('d/m/Y H:i') }}</span>
+                        </div>
 
-                {{-- Render inicial (substituído via AJAX após o load) --}}
-                <div class="sugestoes-grid" id="sugestoes-grid">
-                    @forelse($sugestoes as $sugestao)
-                        <div class="sugestao-card" id="sugestao-card-{{ $sugestao->id }}">
-                            <div class="sugestao-header">
-                                <span class="sugestao-index">#{{ $sugestao->id }}</span>
-                                <span class="sugestao-data">{{ optional($sugestao->created_at)->format('d/m/Y H:i') }}</span>
+                        <div class="card-body-text">
+                            {{ \Illuminate\Support\Str::limit($sugestao->conteudo, 150) }}
+                        </div>
+
+                        <div class="card-footer">
+                            <div class="author-info">
+                                <i class="fa-solid fa-user-circle" style="color:#cbd5e1; font-size:1.2rem;"></i>
+                                <span style="font-weight:600; color:#334155;">{{ $sugestao->nome ?? 'Anônimo' }}</span>
                             </div>
 
-                            <div class="sugestao-conteudo">
-                                {{ \Illuminate\Support\Str::limit($sugestao->conteudo, 150) }}
-                            </div>
-
-                            <div class="sugestao-autor">
-                                <strong>Autor:</strong> {{ $sugestao->nome ?? 'Anônimo' }}
-                            </div>
-
-                            <div class="sugestao-status">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
                                 @if($sugestao->respondido)
-                                    <x-bi-check-circle-fill class="text-success" width="18" height="18"/>
-                                    <i>
-                                        <b class="answer">Respondido por:</b>
-                                        <b>{{ \Illuminate\Support\Str::limit(explode(' ', $sugestao->respondido_por ?? 'Desconhecido')[0], 15) }}</b>
-                                        <b class="answer">em:</b>
-                                        <b class="sugestao-data">{{ optional($sugestao->data_resposta)->format('d/m/Y H:i') }}</b>
-                                    </i>
+                                    <div class="status-badge" style="background:#dcfce7; color:#166534;">
+                                        <i class="fa-solid fa-check"></i> Respondido
+                                    </div>
                                 @else
-                                    <x-bi-x-circle-fill class="text-danger" width="18" height="18"/>
-                                    <i><p>Não respondido</p></i>
+                                    <div class="status-badge" style="background:#fee2e2; color:#991b1b;">
+                                        <i class="fa-regular fa-clock"></i> Pendente
+                                    </div>
                                 @endif
-                            </div>
 
-                            <div class="sugestao-actions" style="display:flex; gap:8px; align-items:center;">
-                                <button type="button"
-                                        onclick="window.location.href='{{ route('sugestoes.responder', $sugestao->id) }}'"
-                                        title="Responder"
-                                        aria-label="Responder"
-                                        style="background:none;border:none;padding:0;cursor:pointer;line-height:0;">
-                                    <img src="{{ asset('assets/reply.svg') }}" alt="Responder" width="24" height="24">
-                                </button>
-
-                                @if($sugestao->respondido !== true)
-                                    <button type="button"
-                                            onclick="abrirModal('{{ route('sugestoes.destroy', $sugestao->id) }}', {{ $sugestao->id }})"
-                                            title="Apagar"
-                                            aria-label="Apagar"
-                                            style="background:none;border:none;padding:0;cursor:pointer;line-height:0;margin-right:8px;">
-                                        <img src="{{ asset('assets/trash.svg') }}" alt="Apagar" width="24" height="24">
+                                <div class="card-actions">
+                                    <button class="action-btn btn-reply" onclick="window.location.href='{{ route('sugestoes.responder', $sugestao->id) }}'" title="Responder">
+                                        <i class="fa-solid fa-reply"></i>
                                     </button>
-                                @endif
+
+                                    @if(!$sugestao->respondido)
+                                        <button class="action-btn btn-delete" onclick="confirmarExclusao('{{ route('sugestoes.destroy', $sugestao->id) }}', {{ $sugestao->id }})" title="Excluir">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    @empty
-                        <div class="empty-state">
-                            <i class="fa-solid fa-circle-info"></i>
-                            <p>Não há sugestões no momento.</p>
-                        </div>
-                    @endforelse
-                </div>
-
-                <div id="paginacao" style="margin-top:12px; display:flex; gap:8px; align-items:center;">
-                    <button id="prev-page" class="btn btn-light btn-sm" disabled>Anterior</button>
-                    <span id="page-info"></span>
-                    <button id="next-page" class="btn btn-light btn-sm" disabled>Próxima</button>
-                </div>
+                    </div>
+                @empty
+                    <div class="empty-state" style="grid-column: 1/-1; text-align:center; padding: 40px; color: #94a3b8;">
+                        <i class="fa-solid fa-folder-open" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                        <p style="font-size: 1.1rem;">Nenhum registro encontrado.</p>
+                    </div>
+                @endforelse
             </div>
+        </div>
+
+        <div class="pagination-bar">
+            <button id="prev-page" class="btn btn-page" disabled>
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <span id="page-info" style="font-size:0.9rem; font-weight:600; color: var(--text-color);">
+                Página 1
+            </span>
+            <button id="next-page" class="btn btn-page" disabled>
+                 <i class="fa-solid fa-chevron-right"></i>
+            </button>
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="modal-confirmacao" class="modal" role="dialog" aria-modal="true" aria-labelledby="titulo-modal">
-        <div class="modal-content">
-            <h3 id="titulo-modal">Confirmar Exclusão</h3>
-            <p>Tem certeza que deseja apagar esta sugestão? Esta ação não pode ser desfeita.</p>
+    <x-modal id="modal-delete" title="Apagar Sugestão?">
+        Você tem certeza que deseja remover este registro permanentemente do sistema?
+        
+        <x-slot name="actions">
+            <form id="form-delete" method="POST" onsubmit="return false">
+                @csrf @method('DELETE')
+                <button type="submit" class="btn btn-danger" id="btn-confirmar-delete">Sim, Apagar</button>
+            </form>
+        </x-slot>
+    </x-modal>
+@endsection
 
-            <div class="modal-actions">
-                <button class="btn btn-secondary" type="button" onclick="fecharModal()">Cancelar</button>
-
-                <form id="form-delete" method="POST" onsubmit="return false">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger" id="btn-confirmar-delete">Apagar</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</main>
-
+@push('scripts')
 <script>
-    // Estado do item que está sendo deletado
-    let deletandoId = null;
-
-    function abrirModal(actionUrl, id) {
-        deletandoId = id;
-        const form = document.getElementById('form-delete');
-        form.action = actionUrl;
-        document.getElementById('modal-confirmacao').classList.add('show');
-    }
-
-    function fecharModal() {
-        document.getElementById('modal-confirmacao').classList.remove('show');
-        deletandoId = null;
-    }
-
-    function getCsrfToken() {
-        const meta = document.querySelector('meta[name="csrf-token"]');
-        return meta ? meta.getAttribute('content') : '';
-    }
-
+    // Variáveis de Estado
     let state = {
-        apenasNaoRespondidas: {{ $soNaoRespondidas ? 'true' : 'false' }},
+        apenasNaoRespondidas: {{ $apenasNaoRespondidas ? 'true' : 'false' }},
         page: 1,
         perPage: 12,
         q: '',
-        total: 0,
-        lastPage: 1
+        lastPage: {{ method_exists($sugestoes, 'lastPage') ? $sugestoes->lastPage() : 1 }},
+        total: {{ method_exists($sugestoes, 'total') ? $sugestoes->total() : $sugestoes->count() }}
     };
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('form-delete');
-        const btnConfirmar = document.getElementById('btn-confirmar-delete');
+    let deletandoId = null;
 
-        form.addEventListener('submit', async function (e) {
-            e.preventDefault();
-            const url = form.action;
-            if (!url) return alert('URL de exclusão não definida.');
-            const token = getCsrfToken();
-            btnConfirmar.disabled = true;
-
-            try {
-                const resp = await fetch(url, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': token,
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({})
-                });
-                const data = await resp.json().catch(() => ({}));
-                if (resp.ok && data && data.success) {
-                    if (deletandoId !== null) {
-                        const card = document.getElementById(`sugestao-card-${deletandoId}`);
-                        if (card) card.remove();
-                    }
-                    fecharModal();
-                    fetchAndRender();
-                } else {
-                    alert(data?.message || 'Falha ao apagar a sugestão.');
-                }
-            } catch (err) {
-                console.error('Erro ao apagar:', err);
-                alert('Erro de rede ao tentar apagar.');
-            } finally {
-                btnConfirmar.disabled = false;
-            }
-        });
-
-        document.getElementById('per-page').value = String(state.perPage);
+    // Inicialização
+    document.addEventListener('DOMContentLoaded', () => {
+        updatePaginationUI();
         initEvents();
-        fetchAndRender();
     });
 
-    // Toggle do filtro respondidas/não respondidas
-    const toggleSwitch = document.getElementById('toggle-respondidas');
-let toggleBlocked = false;
-
-toggleSwitch.addEventListener('change', (e) => {
-    if (toggleBlocked) return; // impede novos cliques
-    toggleBlocked = true;
-
-    state.apenasNaoRespondidas = e.target.checked;
-    state.page = 1;
-    fetchAndRender();
-    document.getElementById('label-toggle').textContent = state.apenasNaoRespondidas
-        ? "Apenas não respondidas"
-        : "Todas";
-
-    // libera o switch após 1 segundo
-    setTimeout(() => {
-        toggleBlocked = false;
-    }, 1000);
-});
-
+    function confirmarExclusao(url, id) {
+        deletandoId = id;
+        document.getElementById('form-delete').action = url;
+        abrirModal('modal-delete');
+    }
 
     function initEvents() {
+        // Filtro Toggle
+        document.getElementById('toggle-respondidas').addEventListener('change', (e) => {
+            state.apenasNaoRespondidas = e.target.checked;
+            document.getElementById('label-toggle').innerText = state.apenasNaoRespondidas ? 'Pendentes' : 'Todas';
+            resetAndFetch();
+        });
+
+        // Itens por página
+        document.getElementById('per-page').addEventListener('change', (e) => {
+            state.perPage = e.target.value;
+            resetAndFetch();
+        });
+
+        // Busca
+        let timer;
+        document.getElementById('busca').addEventListener('input', (e) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                state.q = e.target.value.trim();
+                resetAndFetch();
+            }, 500);
+        });
+
+        // Paginação
         document.getElementById('prev-page').addEventListener('click', () => {
             if (state.page > 1) { state.page--; fetchAndRender(); }
         });
+
         document.getElementById('next-page').addEventListener('click', () => {
             if (state.page < state.lastPage) { state.page++; fetchAndRender(); }
         });
-        const buscaInput = document.getElementById('busca');
-        let buscaTimer = null;
-        buscaInput.addEventListener('input', () => {
-            clearTimeout(buscaTimer);
-            buscaTimer = setTimeout(() => {
-                state.q = buscaInput.value.trim();
-                state.page = 1;
-                fetchAndRender();
-            }, 300);
-        });
-        document.getElementById('per-page').addEventListener('change', (e) => {
-            state.perPage = parseInt(e.target.value, 10) || 12;
-            state.page = 1;
-            fetchAndRender();
-        });
+
+        // Deletar
+        document.getElementById('form-delete').addEventListener('submit', handleDelete);
     }
 
-    async function fetchAndRender() {
-        const loader = document.getElementById('loader');
-        loader.style.display = 'block';
-        const params = new URLSearchParams({
-            page: state.page,
-            per_page: state.perPage,
-        });
-        if (state.apenasNaoRespondidas) params.set('apenas_nao_respondidas', '1');
-        if (state.q) params.set('q', state.q);
+    function resetAndFetch() {
+        state.page = 1;
+        fetchAndRender();
+    }
+
+    // Função de Deletar
+    async function handleDelete(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btn-confirmar-delete');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Apagando...';
 
         try {
-            const resp = await fetch(`{{ route('dashboard.sugestoes.json') }}?` + params.toString(), {
-                headers: { 'X-Requested-With': 'XMLHttpRequest','Accept': 'application/json' }
+            const resp = await fetch(e.target.action, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json', 'Content-Type': 'application/json'
+                }
             });
-            const json = await resp.json();
-            if (!resp.ok || !json.success) throw new Error(json.message || 'Falha ao carregar sugestões');
-            renderGrid(json.data);
-            renderMeta(json.meta);
+            const data = await resp.json();
+
+            if (resp.ok && data.success) {
+                // Remove visualmente
+                const card = document.getElementById(`sugestao-card-${deletandoId}`);
+                if(card) {
+                    card.style.transform = 'scale(0.9) translateY(20px)';
+                    card.style.opacity = '0';
+                    setTimeout(() => card.remove(), 300);
+                }
+                showToast('Sugestão removida com sucesso!');
+                fecharModal('modal-delete');
+                state.total--;
+                updatePaginationUI();
+            } else {
+                showToast(data.message || 'Erro ao apagar.', 'error');
+            }
         } catch (err) {
             console.error(err);
-            alert('Erro ao carregar sugestões.');
+            showToast('Erro de conexão.', 'error');
         } finally {
-            loader.style.display = 'none';
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
+    }
+
+    // Busca e Renderiza (AJAX)
+    async function fetchAndRender() {
+        toggleLoading(true, 'sugestoes-grid', 'skeleton-grid'); // Usa função global
+
+        const params = new URLSearchParams({
+            page: state.page, per_page: state.perPage, q: state.q,
+            apenas_nao_respondidas: state.apenasNaoRespondidas ? '1' : '0'
+        });
+
+        try {
+            const [resp] = await Promise.all([
+                fetch(`{{ route('dashboard.sugestoes.json') }}?` + params),
+                new Promise(resolve => setTimeout(resolve, 300))
+            ]);
+            const json = await resp.json();
+
+            if (json.success) {
+                renderGrid(json.data);
+                state.lastPage = json.meta.last_page;
+                state.total = json.meta.total;
+                updatePaginationUI();
+            }
+        } catch (error) {
+            showToast('Erro ao carregar dados.', 'error');
+        } finally {
+            toggleLoading(false, 'sugestoes-grid', 'skeleton-grid');
         }
     }
 
     function renderGrid(items) {
         const grid = document.getElementById('sugestoes-grid');
         grid.innerHTML = '';
-        if (!items || items.length === 0) {
-            grid.innerHTML = `
-              <div class="empty-state">
-                <i class="fa-solid fa-circle-info"></i>
-                <p>Não há sugestões no momento.</p>
-              </div>`;
+
+        if (items.length === 0) {
+            grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8;"><i class="fa-solid fa-folder-open" style="font-size:3rem;margin-bottom:15px;"></i><p>Nenhum registro encontrado.</p></div>`;
             return;
         }
-        for (const s of items) {
-            const statusHtml = s.respondido
-              ? `
-              <div class="sugestao-status">
-                <svg class="text-success" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0"/>
-                  <path fill="#fff" d="M11.03 5.97a.75.75 0 0 1 0 1.06L7.78 10.28a.75.75 0 0 1-1.06 0L4.97 8.53a.75.75 0 1 1 1.06-1.06l1.22 1.22 2.78-2.78a.75.75 0 0 1 1.06 0z"/>
-                </svg>
-                <i>
-                  <b class="answer">Respondido por:</b>
-                  <b>${(s.respondido_por || 'Desconhecido').split(' ')[0].slice(0,15)}</b>
-                  <b class="answer">em:</b>
-                  <b class="sugestao-data">${s.data_resposta || ''}</b>
-                </i>
-              </div>`
-              : `
-              <div class="sugestao-status">
-                <svg class="text-danger" width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0"/>
-                </svg>
-                <i><p>Não respondido</p></i>
-              </div>`;
+
+        items.forEach((item, index) => {
+            const delay = index * 50;
+            const respondidoHtml = item.respondido 
+                ? `<div class="status-badge" style="background:#dcfce7; color:#166534;"><i class="fa-solid fa-check"></i> Respondido</div>`
+                : `<div class="status-badge" style="background:#fee2e2; color:#991b1b;"><i class="fa-regular fa-clock"></i> Pendente</div>`;
+            
+            const deleteBtn = !item.respondido 
+                ? `<button class="action-btn btn-delete" onclick="confirmarExclusao('${item.links.destroy}', ${item.id})" title="Excluir"><i class="fa-solid fa-trash-can"></i></button>` : '';
+
             const card = document.createElement('div');
             card.className = 'sugestao-card';
-            card.id = `sugestao-card-${s.id}`;
+            card.id = `sugestao-card-${item.id}`;
+            card.style.animationDelay = `${delay}ms`;
+            
             card.innerHTML = `
-              <div class="sugestao-header">
-                <span class="sugestao-index">#${s.id}</span>
-                <span class="sugestao-data">${s.created_at || ''}</span>
-              </div>
-              <div class="sugestao-conteudo">${limitText(s.conteudo, 150)}</div>
-              <div class="sugestao-autor">
-                <strong>Autor:</strong> ${escapeHtml(s.nome || 'Anônimo')}
-              </div>
-              ${statusHtml}
-              <div class="sugestao-actions" style="display:flex; gap:8px; align-items:center;">
-                <button type="button"
-                  onclick="window.location.href='${s.links.responder}'"
-                  title="Responder" aria-label="Responder"
-                  style="background:none;border:none;padding:0;cursor:pointer;line-height:0;">
-                  <img src="{{ asset('assets/reply.svg') }}" alt="Responder" width="24" height="24">
-                </button>
-                ${!s.respondido ? `
-                <button type="button"
-                  onclick="abrirModal('${s.links.destroy}', ${s.id})"
-                  title="Apagar" aria-label="Apagar"
-                  style="background:none;border:none;padding:0;cursor:pointer;line-height:0;margin-right:8px;">
-                  <img src="{{ asset('assets/trash.svg') }}" alt="Apagar" width="24" height="24">
-                </button>` : ''}
-              </div>`;
+                <div class="card-top"><span class="card-id">#${item.id}</span><span>${item.created_at_formatado || item.created_at}</span></div>
+                <div class="card-body-text">${escapeHtml(item.conteudo.length > 140 ? item.conteudo.substring(0, 140) + '...' : item.conteudo)}</div>
+                <div class="card-footer">
+                    <div class="author-info"><i class="fa-solid fa-user-circle" style="color:#cbd5e1;font-size:1.2rem;"></i> <span style="font-weight:600;color:#334155;">${escapeHtml(item.nome || 'Anônimo')}</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+                        ${respondidoHtml}
+                        <div class="card-actions">
+                            <button class="action-btn btn-reply" onclick="window.location.href='${item.links.responder}'" title="Responder"><i class="fa-solid fa-reply"></i></button>
+                            ${deleteBtn}
+                        </div>
+                    </div>
+                </div>`;
             grid.appendChild(card);
-        }
+        });
     }
 
-    function renderMeta(meta) {
-        state.page = meta.current_page;
-        state.lastPage = meta.last_page;
-        state.total = meta.total;
-        document.getElementById('badge-total').textContent = `Total: ${meta.total} / ${meta.total_geral}`;
+    function updatePaginationUI() {
+        document.getElementById('badge-total').innerText = `${state.total} registros`;
+        document.getElementById('page-info').innerText = `Página ${state.page} de ${state.lastPage}`;
         document.getElementById('prev-page').disabled = state.page <= 1;
         document.getElementById('next-page').disabled = state.page >= state.lastPage;
-        document.getElementById('page-info').textContent = `Página ${state.page} de ${state.lastPage}`;
     }
 
-    function limitText(text, max) {
-        const t = (text || '').toString();
-        return t.length <= max ? escapeHtml(t) : escapeHtml(t.slice(0, max)) + '…';
-    }
-
-    function escapeHtml(str) {
-        return String(str)
-            .replaceAll('&','&amp;')
-            .replaceAll('<','&lt;')
-            .replaceAll('>','&gt;')
-            .replaceAll('"','&quot;')
-            .replaceAll("'","&#039;");
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 </script>
-
-</body>
-</html>
+@endpush

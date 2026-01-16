@@ -1,4 +1,4 @@
-@include('includes.header')
+
 <body>
     <div class="container_criticas">
         <h1 class="criticas_h1">{{ __('Sugestões') }}</h1>

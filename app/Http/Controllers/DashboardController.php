@@ -3,59 +3,66 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Sugestao; // Importação limpa
 use Carbon\Carbon;
-use App\Models\Sugestao;
 
 class DashboardController extends Controller
 {
-    public function getGreeting()
-    {
-        $currentHour = Carbon::now()->format('H');
-
-        if ($currentHour < 12) {
-            return 'Bom dia';
-        } elseif ($currentHour < 18) {
-            return 'Boa tarde';
-        } else {
-            return 'Boa noite';
-        }
-    }
-
+    /**
+     * Exibe a página inicial do dashboard.
+     */
     public function showDashboard()
     {
-        $greeting = $this->getGreeting();
-        return view('dashboard.index', ['greeting' => $greeting]);
+        return view('dashboard.index', [
+            'greeting' => $this->getGreeting()
+        ]);
     }
 
+    /**
+     * Exibe o gráfico de relatórios.
+     */
     public function reportChart()
     {
         return view('dashboard.report-chart');
     }
 
-   public function sugestoesDashboard(\Illuminate\Http\Request $request)
-{
-    $greeting = $this->getGreeting();
+    /**
+     * Exibe e filtra a lista de sugestões.
+     */
+    public function sugestoesDashboard(Request $request)
+    {
+        // 1. Query Builder Fluido
+        $sugestoes = Sugestao::visiveis()
+            ->latest() // Atalho para order by created_at desc
+            ->when($request->boolean('apenas_nao_respondidas'), function ($query) {
+                // Usa o escopo que criamos no Model (reutilização de código)
+                $query->naoRespondidas();
+            })
+            ->paginate(12) // Resolve o erro do "Collection::total"
+            ->withQueryString(); // Mantém os filtros na URL ao mudar de página
 
-    $query = \App\Models\Sugestao::visiveis()->latest();
+        // 2. Contagem separada (apenas visíveis)
+        $totalGeral = Sugestao::visiveis()->count();
 
-    if ($request->boolean('apenas_nao_respondidas')) {
-        $query->where(function ($q) {
-            $q->where('respondido', false)->orWhereNull('respondido');
-        });
+        return view('dashboard.sugestoes', [
+            'greeting'             => $this->getGreeting(),
+            'sugestoes'            => $sugestoes,
+            'totalGeral'           => $totalGeral,
+            'apenasNaoRespondidas' => $request->boolean('apenas_nao_respondidas'),
+        ]);
     }
 
-    $sugestoes = $query->get();
-    $totalGeral = \App\Models\Sugestao::visiveis()->count();
+    /**
+     * Helper privado para definir a saudação baseada na hora.
+     */
+    private function getGreeting(): string
+    {
+        $hour = Carbon::now()->hour;
 
-    return view('dashboard.sugestoes', [
-        'greeting'             => $greeting,
-        'sugestoes'            => $sugestoes,
-        'apenasNaoRespondidas' => $request->boolean('apenas_nao_respondidas'),
-        'totalGeral'           => $totalGeral,
-    ]);
-}
-
-
-
-
+        return match (true) {
+            $hour < 12 => 'Bom dia',
+            $hour < 18 => 'Boa tarde',
+            default    => 'Boa noite',
+        };
+    }
 }

@@ -1,11 +1,22 @@
-@props(['active'])
+@props(['id', 'title', 'type' => 'danger'])
 
-@php
-$classes = ($active ?? false)
-            ? 'inline-flex items-center px-1 pt-1 border-b-2 border-indigo-400 text-sm font-medium leading-5 text-gray-900 focus:outline-none focus:border-indigo-700 transition duration-150 ease-in-out'
-            : 'inline-flex items-center px-1 pt-1 border-b-2 border-transparent text-sm font-medium leading-5 text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:outline-none focus:text-gray-700 focus:border-gray-300 transition duration-150 ease-in-out';
-@endphp
+<div id="{{ $id }}" class="modal" aria-hidden="true" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-icon" style="background: {{ $type == 'danger' ? '#fee2e2' : '#dcfce7' }}; color: {{ $type == 'danger' ? '#dc2626' : '#16a34a' }};">
+            <i class="fa-regular {{ $type == 'danger' ? 'fa-trash-can' : 'fa-check-circle' }}"></i>
+        </div>
+        
+        <h3 class="modal-title">{{ $title }}</h3>
+        
+        <div class="modal-desc">
+            {{ $slot }}
+        </div>
 
-<a {{ $attributes->merge(['class' => $classes]) }}>
-    {{ $slot }}
-</a>
+        <div class="modal-actions">
+            <button class="btn btn-secondary" onclick="fecharModal('{{ $id }}')">Cancelar</button>
+            <div id="{{ $id }}-actions">
+                {{ $actions ?? '' }}
+            </div>
+        </div>
+    </div>
+</div>

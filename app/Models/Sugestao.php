@@ -37,7 +37,6 @@ class Sugestao extends Model
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
     ];
-
     // Escopo local para filtrar visíveis
     public function scopeVisiveis(Builder $query): Builder
     {
