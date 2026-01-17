@@ -4,53 +4,54 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Support\Facades\Auth;
 
-class Sugestao extends Model
+class Sugestao extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+    use SoftDeletes; // O Laravel gerencia o 'deleted_at' automaticamente
     use HasFactory;
 
     protected $table = 'sugestoes';
 
-    // Campos preenchíveis via mass assignment
     protected $fillable = [
+        'conteudo',
         'nome',
         'email',
-        'conteudo',
-        'respondido',
-        'data_resposta',
-        'id_user_responded',
-        'respondido_por', // se for relacionamento, use 'respondido_por_id' e defina o relacionamento no modelo
-        // 'respondido_por', // se for string/nome direto e precisar preencher, mantenha
-        'id_user_deleted',
-        'visible',
-        'modificado_por',
-        // NÃO incluir created_at/updated_at/deleted_at aqui
+        'id_user_deleted'
     ];
 
-    // Casts de tipos
-    protected $casts = [
-        'respondido'    => 'boolean',
-        'visible'       => 'boolean',
-        'data_resposta' => 'datetime',
-        'deleted_at'    => 'datetime',
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
-    ];
-    // Escopo local para filtrar visíveis
-    public function scopeVisiveis(Builder $query): Builder
+    /**
+     * O 'booted' é o lugar perfeito para interceptar o delete.
+     */
+    protected static function booted()
     {
-        return $query->where('visible', true);
+        static::deleting(function ($sugestao) {
+            // Antes de deletar, salvamos o ID do usuário logado
+            if (Auth::check()) {
+                $sugestao->id_user_deleted = Auth::id();
+                
+                // saveQuietly: Salva o ID no banco SEM disparar eventos.
+                // Isso evita que o Auditor crie um log de "UPDATED" desnecessário.
+                $sugestao->saveQuietly();
+            }
+        });
     }
 
-    public function scopeNaoRespondidas($q)
+    // --- ESCOPOS (Ficaram mais limpos) ---
+
+    // O escopo 'visiveis' agora é redundante, pois o SoftDeletes
+    // já esconde os deletados por padrão. Mas se quiser manter o nome:
+    public function scopeVisiveis($query)
     {
-        return $q->where(function($q){
-        $q->where('respondido', false)->orWhereNull('respondido');
-    });
-}
+        // Retorna a query padrão (que já exclui os deletados)
+        return $query; 
+    }
 
-    
-
-   
+    public function scopeNaoRespondidas($query)
+    {
+        return $query->whereNull('respondida_em');
+    }
 }

@@ -108,11 +108,14 @@
                                 @endif
 
                                 <div class="card-actions">
+                                    @if ($sugestao->respondido)
+                                        <button class="action-btn btn-view" onclick="window.location.href='{{ route('sugestoes.responder', $sugestao->id) }}'" title="Exibir Resposta">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                    @else
                                     <button class="action-btn btn-reply" onclick="window.location.href='{{ route('sugestoes.responder', $sugestao->id) }}'" title="Responder">
                                         <i class="fa-solid fa-reply"></i>
                                     </button>
-
-                                    @if(!$sugestao->respondido)
                                         <button class="action-btn btn-delete" onclick="confirmarExclusao('{{ route('sugestoes.destroy', $sugestao->id) }}', {{ $sugestao->id }})" title="Excluir">
                                             <i class="fa-solid fa-trash-can"></i>
                                         </button>

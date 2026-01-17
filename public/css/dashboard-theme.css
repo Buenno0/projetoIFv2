@@ -297,6 +297,7 @@
     .action-btn:active { transform: scale(0.95); }
     
     .btn-reply:hover { background: var(--primary-color); color: white; }
+    .btn-view:hover { background: #d1fae5; color: var(--success); }
     .btn-delete:hover { background: #fee2e2; color: var(--error); }
 
     /* =========================================

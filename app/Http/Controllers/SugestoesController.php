@@ -6,114 +6,78 @@ use Illuminate\Http\Request;
 use App\Models\Sugestao;
 use App\Http\Resources\SugestaoResource;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 
 class SugestoesController extends Controller
 {
-
-     public function show()
-    {
-        $sugestoes = Sugestao::where('visible', true)
-            ->orderBy('created_at', 'desc')
-            ->get();
-            return view('sugestoes.index', compact('sugestoes'));
-    }
-
     public function index(Request $request)
-{
-    $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
-
-    $query = Sugestao::query()
-        ->visiveis()               // aplica o escopo
-        ->latest('created_at');
-
-    if ($apenasNaoRespondidas) {
-        $query->naoRespondidas();  // usa também o escopo local já definido
-    }
-
-    // Na render inicial, carregue algumas para fallback
-    $sugestoes = $query->limit(12)->get();
-
-    // Total geral apenas das visíveis (se quiser manter o total de todas, use Sugestao::count())
-    $totalGeral = Sugestao::visiveis()->count();
-
-    return view('dashboard.sugestoes', [
-        'sugestoes' => $sugestoes,
-        'totalGeral' => $totalGeral,
-        'apenasNaoRespondidas' => $apenasNaoRespondidas,
-    ]);
-}
-
-
-    public function indexJson(Request $request)
-{
-    $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
-    $perPage = max(1, (int) $request->input('per_page', 12));
-    $page = max(1, (int) $request->input('page', 1));
-    $busca = trim((string) $request->input('q', ''));
-
-    $query = Sugestao::query()
-        ->visiveis()               // aplica o escopo
-        ->latest('created_at');
-
-    if ($apenasNaoRespondidas) {
-        $query->naoRespondidas();  // escopo local
-    }
-
-    if ($busca !== '') {
-        $query->where(function($q) use ($busca) {
-            $q->where('conteudo', 'like', "%{$busca}%")
-              ->orWhere('nome', 'like', "%{$busca}%");
-        });
-    }
-
-    $paginator = $query->paginate($perPage, ['*'], 'page', $page);
-
-    // Se quiser metadado do total geral apenas de visíveis:
-    $totalGeral = Sugestao::visiveis()->count();
-
-    return response()->json([
-        'success' => true,
-        'data' => SugestaoResource::collection($paginator->items()),
-        'meta' => [
-            'current_page' => $paginator->currentPage(),
-            'per_page'     => $paginator->perPage(),
-            'total'        => $paginator->total(),
-            'last_page'    => $paginator->lastPage(),
-            'total_geral'  => $totalGeral,
-            'apenas_nao_respondidas' => $apenasNaoRespondidas,
-            'q' => $busca,
-        ],
-    ]);
-}
-
-     public function destroy(Request $request, $id)
     {
-        $sugestao = Sugestao::find($id);
+        $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
 
-        if (!$sugestao || !$sugestao->visible) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Sugestão não encontrada ou já excluída.',
-            ], 404);
+        // NÃO precisa mais de ->where('visible', true) ou escopo ->visiveis()
+        // O Laravel SoftDeletes já traz apenas as ativas por padrão.
+        $query = Sugestao::query()->latest('created_at');
+
+        if ($apenasNaoRespondidas) {
+            $query->naoRespondidas();
         }
 
-        $sugestao->visible = false;
-        $sugestao->deleted_at = Carbon::now();
-        $sugestao->id_user_deleted = Auth::id();
+        $sugestoes = $query->limit(12)->get();
+        $totalGeral = Sugestao::count(); // Já conta apenas as não deletadas
 
-        $sugestao->save();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Sugestão removida (soft delete) com sucesso.',
-            'id' => (int) $sugestao->id,
+        return view('dashboard.sugestoes', [
+            'sugestoes' => $sugestoes,
+            'totalGeral' => $totalGeral,
+            'apenasNaoRespondidas' => $apenasNaoRespondidas,
         ]);
     }
 
-       public function create()
+    // Método de API (JSON)
+    public function indexJson(Request $request)
     {
-        return view('sugestoes.create');
+        $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
+        $perPage = max(1, (int) $request->input('per_page', 12));
+        $busca = trim((string) $request->input('q', ''));
+
+        $query = Sugestao::query()->latest('created_at');
+
+        if ($apenasNaoRespondidas) {
+            $query->naoRespondidas();
+        }
+
+        if ($busca !== '') {
+            $query->where(function($q) use ($busca) {
+                $q->where('conteudo', 'like', "%{$busca}%")
+                  ->orWhere('nome', 'like', "%{$busca}%");
+            });
+        }
+
+        $paginator = $query->paginate($perPage);
+
+        return response()->json([
+            'success' => true,
+            'data' => SugestaoResource::collection($paginator->items()),
+            'meta' => [
+                'current_page' => $paginator->currentPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
+            ],
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        // findOrFail: Se não achar (ou se já estiver deletado), retorna 404 automaticamente.
+        $sugestao = Sugestao::findOrFail($id);
+
+        // AÇÃO: O Laravel vai preencher o deleted_at 
+        // e o Auditor vai registrar o evento 'deleted'.
+        $sugestao->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Sugestão removida com sucesso.',
+            'id' => (int) $sugestao->id,
+        ]);
     }
 
     public function store(Request $request)
@@ -123,11 +87,11 @@ class SugestoesController extends Controller
             'email' => 'required|email',
         ]);
 
+        // Removemos o 'visible' => true, pois não existe mais a coluna
         $sugestao = Sugestao::create([
             'conteudo' => $request->sugestao,
             'nome' => $request->nome ?? 'Anônimo',
             'email' => $request->email,
-            'visible' => true,
         ]);
 
         return response()->json([
@@ -136,7 +100,4 @@ class SugestoesController extends Controller
             'data' => $sugestao,
         ]);
     }
-
-
-
 }
