@@ -10,7 +10,7 @@
           <img src="{{asset('assets/idea.svg')}}" alt="Ideia">
         </div>
         <div class="welcome-content">
-          <h2>Bem-vindo ao Dashboard</h2>
+          <h2>Bem-vindo ao Dashboard, <span class="user-welcome">{{ Auth::user()->name }}</span></h2>
           <p>Nesta área, você pode acessar feedbacks, enviar e-mails, alterar configurações, adicionar novos usuários e excluir usuários existentes. Aproveite todas as funcionalidades disponíveis.</p>
           <button class="btn-get-started">Começar <i class="fas fa-arrow-right"></i></button>
         </div>

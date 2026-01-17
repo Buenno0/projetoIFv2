@@ -16,7 +16,6 @@
     <div id="toast-container"></div>
 
     <main class="main-content">
-        @include('dashboard.includes.header')
 
         <div class="container">
             @yield('content')

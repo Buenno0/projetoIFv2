@@ -204,6 +204,12 @@ body.collapsed .main-content { margin-left: var(--sidebar-width-collapsed); }
     width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;
 }
 
+.user-welcome {
+    color: #F4D35E;
+    font-weight: lighter;
+    font-style: oblique;
+}
+
 /* ==========================================================================
    4. RESPONSIVIDADE (MOBILE < 768px) - CORRIGIDO
    ========================================================================== */
