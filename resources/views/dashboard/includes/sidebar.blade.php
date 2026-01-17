@@ -105,39 +105,57 @@
 
 
     <script>
+    // --- LÓGICA DE ESTADO (Executar imediatamente para evitar "piscar" a tela) ---
+    // Verifica o localStorage. Se não existir, define como 'true' (fechado por padrão).
+    const savedState = localStorage.getItem('sidebar-collapsed');
+    const body = document.querySelector('body');
+    
+    // Se o valor for 'true' OU se for nulo (primeira visita), adiciona a classe collapsed
+    if (savedState === 'true' || savedState === null) {
+        body.classList.add('collapsed');
+    } else {
+        body.classList.remove('collapsed');
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
-        const body = document.querySelector('body');
         const sidebar = document.querySelector('.sidebar');
         const toggleBtn = document.querySelector('.toggle-btn');
-        const hamburgerBtn = document.querySelector('.hamburger-menu'); // O botão do celular
-        const overlay = document.querySelector('.overlay'); // O fundo escuro
-        const mainContent = document.querySelector('main'); // Se existir
+        const hamburgerBtn = document.querySelector('.hamburger-menu');
+        const overlay = document.querySelector('.overlay');
 
-        // --- 1. Toggle Desktop (A setinha) ---
+        // --- 1. Toggle Desktop com Persistência ---
         if (toggleBtn) {
             toggleBtn.addEventListener('click', () => {
                 body.classList.toggle('collapsed');
+                
+                // Salva o estado atual no localStorage
+                const isCollapsed = body.classList.contains('collapsed');
+                localStorage.setItem('sidebar-collapsed', isCollapsed);
             });
         }
+        function toggleSidebar() {
+  document.body.classList.toggle('collapsed');
+  
+  // Se estiver fechando a sidebar, fecha todos os submenus para evitar bugs visuais
+  if (document.body.classList.contains('collapsed')) {
+     const openSubmenus = document.querySelectorAll('.has-submenu.open');
+     openSubmenus.forEach(el => el.classList.remove('open'));
+  }
+}
 
-        // --- 2. Toggle Mobile (CORREÇÃO CRÍTICA AQUI) ---
+        // --- 2. Toggle Mobile ---
         function toggleMobileMenu() {
-            // AQUI ESTAVA O ERRO: Precisamos adicionar a classe NA SIDEBAR
             sidebar.classList.toggle('mobile-open'); 
-            
-            // E adicionar a classe no overlay
             overlay.classList.toggle('active');
         }
 
-        // Adiciona o evento de clique ao botão hambúrguer
         if (hamburgerBtn) {
             hamburgerBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Previne cliques duplos indesejados
+                e.stopPropagation();
                 toggleMobileMenu();
             });
         }
 
-        // Fecha ao clicar no fundo escuro
         if (overlay) {
             overlay.addEventListener('click', () => {
                 sidebar.classList.remove('mobile-open');
@@ -145,14 +163,40 @@
             });
         }
 
-        // --- 3. Submenus (Mantenha seu código de submenu aqui) ---
+        // --- 3. Submenus ---
         const submenuToggles = document.querySelectorAll('.submenu-toggle');
         submenuToggles.forEach(toggle => {
             toggle.addEventListener('click', (e) => {
-                // ... sua lógica de submenu ...
+                // Impede navegação se for apenas um toggle
+                e.preventDefault(); 
                 const parent = toggle.parentElement;
                 parent.classList.toggle('open');
             });
+        });
+
+        // --- 4. Active Link Highlight (Destaque da Página Atual) ---
+        const currentUrl = window.location.href;
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(link => {
+            // Verifica se o href do link é igual a URL atual
+            if (link.href === currentUrl) {
+                // Adiciona active ao pai (li.nav-item)
+                const navItem = link.closest('.nav-item');
+                if (navItem) {
+                    navItem.classList.add('active');
+
+                    // Se estiver dentro de um submenu, precisamos abrir o pai e ativar o pai também
+                    const parentSubmenu = navItem.closest('.submenu');
+                    if (parentSubmenu) {
+                        const parentNavItem = parentSubmenu.closest('.nav-item');
+                        if (parentNavItem) {
+                            parentNavItem.classList.add('open'); // Abre o accordion
+                            parentNavItem.classList.add('active'); // Opcional: destaca o pai
+                        }
+                    }
+                }
+            }
         });
     });
 </script>

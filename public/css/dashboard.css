@@ -27,8 +27,14 @@
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    
-    --transition-speed: 0.3s;
+
+    /* --- Transições --- */
+    --transition-speed: 0.4s;
+
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --dur-fast: 180ms;
+    --dur-med: 260ms;
+    --dur-slow: 320ms;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -58,8 +64,9 @@ ul { list-style: none; }
     padding: 20px 14px;
     box-shadow: var(--shadow-md);
     display: flex; flex-direction: column; justify-content: space-between;
-    transition: width var(--transition-speed) ease;
     z-index: 999;
+    transition: width var(--transition-speed) ease;
+
 }
 
 /* Header da Sidebar */
@@ -154,6 +161,26 @@ ul { list-style: none; }
 .logout-btn { margin-left: auto; cursor: pointer; opacity: 0.7; }
 .logout-btn:hover { color: #EF4444; opacity: 1; }
 
+/* Estilo para o item ativo no menu */
+.nav-item.active .nav-link {
+    /* Branco com 15% de opacidade */
+    background-color: rgba(255, 255, 255, 0.15); 
+    color: #ffffff;
+    border-radius: 8px; /* Ajuste conforme seu design */
+    font-weight: 500;
+}
+
+.nav-item.active .nav-link .nav-icon,
+.nav-item.active .nav-link .nav-text {
+    color: #fff;
+}
+
+/* Garante que submenus ativos fiquem visíveis */
+.nav-item.has-submenu.open .submenu {
+    display: block; /* Ou a propriedade que você usa para abrir */
+    max-height: 1000px; /* Se estiver usando transição de altura */
+}
+
 /* Tooltips */
 .tooltip {
     position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
@@ -170,17 +197,62 @@ ul { list-style: none; }
 }
 .sidebar.collapsed .nav-item:hover > .nav-link .tooltip { opacity: 1; transition-delay: 0.1s; }
 
-/* Estados Collapsed */
-body.collapsed .sidebar { width: var(--sidebar-width-collapsed); }
+/* =========================================
+   ESTADOS COLLAPSED (SIDEBAR FECHADA)
+   ========================================= */
+
+/* 1. Ajusta o container principal */
+body.collapsed .sidebar {
+    padding-left: 8px;
+    padding-right: 8px;
+    width: 70px; 
+}
+
+/* 2. Centraliza o ícone e cria o quadrado perfeito */
+body.collapsed .nav-link {
+    justify-content: center; 
+    padding: 0;
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+    border-radius: 12px;
+}
+
+/* 3. Reseta o ícone para caber no quadrado */
+body.collapsed .nav-icon {
+    min-width: 0;
+    margin: 0;
+    font-size: 22px;
+}
+
+/* 4. ESCONDE elementos de texto e setas (Código Limpo) */
+/* Agrupamos tudo que deve sumir aqui */
 body.collapsed .logo-text, 
 body.collapsed .nav-text, 
 body.collapsed .chevron, 
 body.collapsed .user-info, 
-body.collapsed .logout-btn { opacity: 0; pointer-events: none; display: none; }
-body.collapsed .toggle-btn { transform: translateY(-50%) rotate(180deg); }
-body.collapsed .submenu { display: none !important; }
-body.collapsed .sidebar-header { justify-content: center; padding-left: 0; }
-body.collapsed .logo-wrapper { width: auto; justify-content: center; }
+body.collapsed .logout-btn,
+body.collapsed .submenu { 
+    display: none !important; 
+}
+
+/* 5. Ajustes Específicos de Layout */
+body.collapsed .sidebar-header { 
+    justify-content: center; 
+    padding-left: 0; 
+}
+
+body.collapsed .logo-wrapper { 
+    width: auto; 
+    justify-content: center; 
+}
+
+/* 6. Gira o botão de fechar */
+body.collapsed .toggle-btn { 
+    transform: translateY(-50%) rotate(180deg); 
+    transition: transform var(--transition-speed) ease;
+}
+
 
 /* ==========================================================================
    3. ESTILOS DO CONTEÚDO PRINCIPAL
