@@ -1,174 +1,160 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="utf-8">
-    <title>Sidebar with Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Dashboard Sidebar</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Krub:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;1,200;1,300;1,400;1,500;1,600;1,700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+
+    <style>
+    </style>
 </head>
-<body class="collapsed">
-  <div class="sidebar-overlay"></div>
-  <div class="hamburger-menu">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-  </div>
-  
-  <nav>
-    <div class="sidebar-top">
-      <a href="#" class="logo__wrapper">
-        <img src="{{ asset('assets/ifsp_logo_itp.png') }}" class="logo" alt="IFSP">
-        <h1 class="hide">IFSP</h1>
-      </a>
-      
-      <div class="expand-btn">
-        <img src="{{asset('assets/arrw_right.svg')}}" alt="Chevron">
-      </div>
+<body>
+
+    <div class="overlay"></div>
+
+    <div class="hamburger-menu">
+        <i class="ph ph-list" style="font-size: 24px;"></i>
     </div>
-    <div class="sidebar-links">
-        <ul>
-          <li>
-            <a href="{{route('dashboard.sugestoes')}}" title="Dashboard" class="tooltip">
-              <img src="{{asset('assets/review.svg')}}" alt="Dashboard">
-              <span class="link hide">Sugestões</span>
-              <span class="tooltip__content">Sugestões</span>
+
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="logo-wrapper">
+                <img src="{{ asset('assets/ifsp_logo_itp.png') }}" class="logo-img" alt="Logo">
+                <span class="logo-text">IFSP Dashboard</span>
             </a>
-          </li>
-          <li>
-            <a href="#project" title="Project" class="tooltip">
-                <img src="{{asset('assets/review.svg')}}" alt="Dashboard">
-              <span class="link hide">Críticas</span>
-              <span class="tooltip__content">Críticas</span>
-            </a>
-          </li>
-          <li>
-            <a href="#performance" title="Performance" class="tooltip">
-                <img src="{{asset('assets/review.svg')}}" alt="Dashboard">
-              <span class="link hide">Performance</span>
-              <span class="tooltip__content">Performance</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-      <div class="sidebar-bottom">
-        <div class="sidebar-links">
-          <ul>
-            <li>
-              <a href="#help" title="Help" class="tooltip">
-               <img src="{{ asset('assets/help.svg') }}" alt="Help">
-                <span class="link hide">Ajuda</span>
-                <span class="tooltip__content">Ajuda</span>
-              </a>
-            </li>
-            <li>
-              <a href="#settings" title="Settings" class="tooltip">
-                <img src="{{ asset('assets/config.svg') }}" alt="Settings">
-                <span class="link hide">Configurações</span>
-                <span class="tooltip__content">Configurações</span>
-              </a>
-            </li>
-            <li>
-                <a href="#funds" title="Funds" class="tooltip">
-                  <img src="{{ asset('assets/account.svg') }}" alt="Funds">
-                  <span class="link hide">Conta</span>
-                  <span class="tooltip__content">Conta</span>
+            <div class="toggle-btn">
+                <i class="ph ph-caret-left"></i>
+            </div>
+        </div>
+
+        <ul class="nav-list">
+            
+            <li class="nav-item">
+                <a href="{{route('dashboard.sugestoes')}}" class="nav-link">
+                    <span class="nav-icon"><i class="ph ph-squares-four"></i></span>
+                    <span class="nav-text">Dashboard</span>
+                    <span class="tooltip">Dashboard</span>
                 </a>
-              </li>
-          </ul>
+            </li>
+
+            <li class="nav-item has-submenu">
+                <a href="#" class="nav-link submenu-toggle">
+                    <span class="nav-icon"><i class="ph ph-chart-bar"></i></span>
+                    <span class="nav-text">Gestão</span>
+                    <i class="ph ph-caret-down chevron"></i> <span class="tooltip">Gestão</span>
+                </a>
+                <ul class="submenu">
+                    <li>
+                        <a href="#" class="nav-link">
+                            <span class="nav-icon"><i class="ph ph-thumbs-up"></i></span>
+                            <span class="nav-text">Sugestões</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#project" class="nav-link">
+                            <span class="nav-icon"><i class="ph ph-warning-circle"></i></span>
+                            <span class="nav-text">Críticas</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#performance" class="nav-link">
+                            <span class="nav-icon"><i class="ph ph-trend-up"></i></span>
+                            <span class="nav-text">Performance</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a href="#funds" class="nav-link">
+                    <span class="nav-icon"><i class="ph ph-wallet"></i></span>
+                    <span class="nav-text">Financeiro</span>
+                    <span class="tooltip">Financeiro</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="#settings" class="nav-link">
+                    <span class="nav-icon"><i class="ph ph-gear"></i></span>
+                    <span class="nav-text">Configurações</span>
+                    <span class="tooltip">Configurações</span>
+                </a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <img src="{{ asset('assets/admin_panel.svg') }}" class="avatar" alt="Avatar">
+                <div class="user-info">
+                    <div class="user-name">{{ Auth::check() ? Auth::user()->name : 'Usuário' }}</div>
+                    <div class="user-email">{{ Auth::check() ? Auth::user()->email : 'user@email.com' }}</div>
+                </div>
+                <div class="logout-btn" title="Sair">
+                    <i class="ph ph-sign-out" style="font-size: 20px;"></i>
+                </div>
+            </div>
         </div>
-        <div class="sidebar__profile">
-          <div class="avatar__wrapper">
-            <img class="avatar" src="{{ asset('assets/admin_panel.svg') }}" alt="Profile">
-            <div class="online__status"></div>
-          </div>
-          <div class="avatar__name hide">
-              <div class="user-name">{{Auth::user()->name}}</div>
-              <div class="email">{{Auth::user()->email}}</div>
-          </div>
-        </div>
-        {{-- <p>LOgout</p> --}}
-      </div>
-  </nav>
-  <script>
-   
+    </nav>
 
-//    document.addEventListener('DOMContentLoaded', function() {
-//   const expandBtn = document.querySelector('.expand-btn');
-//   const body = document.querySelector('body');
-  
-//   // Toggle da sidebar
-//   expandBtn.addEventListener('click', () => {
-//     body.classList.toggle('collapsed');
-//   });
-  
-//   // Função para ajustar automaticamente em telas menores
-//   function checkScreenSize() {
-//     if (window.innerWidth <= 768) {
-//       body.classList.add('collapsed');
-//     }
-//   }
-  
-//   // Verificar tamanho ao redimensionar
-//   window.addEventListener('resize', checkScreenSize);
-// });
 
-document.addEventListener('DOMContentLoaded', function() {
-  const expandBtn = document.querySelector('.expand-btn');
-  const body = document.querySelector('body');
-  const hamburgerMenu = document.querySelector('.hamburger-menu');
-  
-  // Toggle da sidebar no desktop
-  expandBtn.addEventListener('click', () => {
-    body.classList.toggle('collapsed');
-  });
-  
-  // Toggle da sidebar no mobile
-  hamburgerMenu.addEventListener('click', () => {
-    body.classList.toggle('sidebar-open');
-  });
-  
-  
-  // Função para ajustar automaticamente em telas menores
-  function checkScreenSize() {
-    if (window.innerWidth <= 768) {
-      body.classList.add('collapsed');
-      body.classList.remove('sidebar-open');
-    }
-  }
-  // Adicione ao seu JavaScript
-const overlay = document.querySelector('.sidebar-overlay');
-overlay.addEventListener('click', () => {
-  body.classList.remove('sidebar-open');
-});
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const body = document.querySelector('body');
+        const sidebar = document.querySelector('.sidebar');
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const hamburgerBtn = document.querySelector('.hamburger-menu'); // O botão do celular
+        const overlay = document.querySelector('.overlay'); // O fundo escuro
+        const mainContent = document.querySelector('main'); // Se existir
 
-  
-  // Fechar sidebar ao clicar em um link (para mobile)
-  const sidebarLinks = document.querySelectorAll('.sidebar-links a');
-  sidebarLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      if (window.innerWidth <= 768) {
-        body.classList.remove('sidebar-open');
-      }
+        // --- 1. Toggle Desktop (A setinha) ---
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                body.classList.toggle('collapsed');
+            });
+        }
+
+        // --- 2. Toggle Mobile (CORREÇÃO CRÍTICA AQUI) ---
+        function toggleMobileMenu() {
+            // AQUI ESTAVA O ERRO: Precisamos adicionar a classe NA SIDEBAR
+            sidebar.classList.toggle('mobile-open'); 
+            
+            // E adicionar a classe no overlay
+            overlay.classList.toggle('active');
+        }
+
+        // Adiciona o evento de clique ao botão hambúrguer
+        if (hamburgerBtn) {
+            hamburgerBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Previne cliques duplos indesejados
+                toggleMobileMenu();
+            });
+        }
+
+        // Fecha ao clicar no fundo escuro
+        if (overlay) {
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            });
+        }
+
+        // --- 3. Submenus (Mantenha seu código de submenu aqui) ---
+        const submenuToggles = document.querySelectorAll('.submenu-toggle');
+        submenuToggles.forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                // ... sua lógica de submenu ...
+                const parent = toggle.parentElement;
+                parent.classList.toggle('open');
+            });
+        });
     });
-  });
-  
-  // Verificar tamanho ao redimensionar
-  window.addEventListener('resize', checkScreenSize);
-  
-  // Verificar tamanho inicial
-  checkScreenSize();
-});
-
-
-
-
-
-  </script>
+</script>
+</body>
+</html>

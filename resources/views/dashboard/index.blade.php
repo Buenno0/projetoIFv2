@@ -1,6 +1,6 @@
 @include('dashboard.includes.sidebar')
 <main class="main-content">
-  @include('dashboard.includes.header')
+  {{-- @include('dashboard.includes.header') --}}
   
   <div class="container dashboard-container">
     <!-- Seção de boas-vindas com design aprimorado -->
