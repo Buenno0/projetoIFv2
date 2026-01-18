@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class Sugestao extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
-    use SoftDeletes; // O Laravel gerencia o 'deleted_at' automaticamente
+    use SoftDeletes;
     use HasFactory;
 
     protected $table = 'sugestoes';
@@ -20,38 +20,41 @@ class Sugestao extends Model implements Auditable
         'conteudo',
         'nome',
         'email',
-        'id_user_deleted'
+        'respondido',        // tinyint
+        'data_resposta',     // datetime
+        'id_user_responded', // bigint
+        'respondido_por',    // varchar
+        'id_user_deleted',   // bigint
+        'modificado_por',    // varchar
+        'conteudo_resposta'  // text
     ];
 
-    /**
-     * O 'booted' é o lugar perfeito para interceptar o delete.
-     */
+    protected $casts = [
+        'respondido' => 'boolean',
+        'data_resposta' => 'datetime',
+    ];
+
     protected static function booted()
     {
         static::deleting(function ($sugestao) {
-            // Antes de deletar, salvamos o ID do usuário logado
             if (Auth::check()) {
                 $sugestao->id_user_deleted = Auth::id();
-                
-                // saveQuietly: Salva o ID no banco SEM disparar eventos.
-                // Isso evita que o Auditor crie um log de "UPDATED" desnecessário.
                 $sugestao->saveQuietly();
             }
         });
     }
 
-    // --- ESCOPOS (Ficaram mais limpos) ---
-
-    // O escopo 'visiveis' agora é redundante, pois o SoftDeletes
-    // já esconde os deletados por padrão. Mas se quiser manter o nome:
+    /* * CORREÇÃO DO ERRO: 
+     * Adicionamos de volta o escopo, mesmo que vazio, para não quebrar o Controller.
+     */
     public function scopeVisiveis($query)
     {
-        // Retorna a query padrão (que já exclui os deletados)
-        return $query; 
+        return $query; // O SoftDeletes já filtra automaticamente
     }
 
     public function scopeNaoRespondidas($query)
     {
-        return $query->whereNull('respondida_em');
+        // Baseado no seu banco (tinyint 0 ou 1)
+        return $query->where('respondido', false); 
     }
 }

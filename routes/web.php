@@ -65,8 +65,15 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('dashboard/sugestoes')->group(function () {
         Route::get('/', [DashboardController::class, 'sugestoesDashboard'])->name('dashboard.sugestoes');
         Route::get('/json', [SugestoesController::class, 'indexJson'])->name('dashboard.sugestoes.json');
-        Route::get('/{id}/responder', [SugestoesController::class, 'responder'])->name('sugestoes.responder');
+        
         Route::delete('/{id}', [SugestoesController::class, 'destroy'])->name('sugestoes.destroy');
+        // Rota para ABRIR a tela de resposta (GET)
+        Route::get('/dashboard/sugestoes/{id}/responder', [SugestoesController::class, 'responder'])
+    ->name('sugestoes.responder');
+
+// Rota para SALVAR a resposta (PUT/POST)
+Route::put('/dashboard/sugestoes/{id}', [SugestoesController::class, 'update'])
+    ->name('sugestoes.update');
     });
 
     // Auditorias (Refatorado)

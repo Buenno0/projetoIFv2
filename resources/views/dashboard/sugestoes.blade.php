@@ -146,13 +146,13 @@
         </div>
     </div>
 
-    <x-modal id="modal-delete" title="Apagar Sugestão?">
-        Você tem certeza que deseja remover este registro permanentemente do sistema?
-        
+    <x-modal id="modal-delete" title="Descartar Sugestão?">
+        Você tem certeza que deseja descartar essa sugestão?
+
         <x-slot name="actions">
             <form id="form-delete" method="POST" onsubmit="return false">
                 @csrf @method('DELETE')
-                <button type="submit" class="btn btn-danger" id="btn-confirmar-delete">Sim, Apagar</button>
+                <button type="submit" class="btn btn-danger" id="btn-confirmar-delete">Sim, Descartar</button>
             </form>
         </x-slot>
     </x-modal>

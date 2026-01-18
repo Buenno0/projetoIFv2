@@ -304,6 +304,46 @@ body.collapsed .main-content { margin-left: var(--sidebar-width-collapsed); }
         box-shadow: 4px 0 15px rgba(0,0,0,0.5);
     }
 
+    body.collapsed .sidebar {
+        width: var(--sidebar-width) !important; /* Força largura total */
+        padding: 20px 14px; /* Reseta o padding do estado collapsed */
+    }
+
+    /* Força os textos e logos a aparecerem mesmo se estiver collapsed */
+    body.collapsed .logo-text, 
+    body.collapsed .nav-text, 
+    body.collapsed .chevron, 
+    body.collapsed .user-info, 
+    body.collapsed .logout-btn,
+    body.collapsed .submenu { 
+        display: block !important; 
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+
+    /* Reseta o alinhamento dos links (estavam centralizados no collapsed) */
+    body.collapsed .nav-link {
+        justify-content: flex-start;
+        width: 100%;
+        height: auto;
+        margin: 0;
+    }
+
+    body.collapsed .nav-icon {
+        margin-right: 0; /* Ajuste conforme seu gap original */
+        font-size: 1.3rem; /* Volta ao tamanho original */
+    }
+
+    /* Garante que o Header alinhe corretamente */
+    body.collapsed .sidebar-header {
+        justify-content: flex-start;
+        padding-left: 0;
+    }
+    
+    body.collapsed .logo-wrapper {
+        width: auto;
+        justify-content: flex-start;
+    }
     /* Esconde elementos Desktop */
     .toggle-btn { display: none !important; }
 
@@ -605,3 +645,6 @@ body.collapsed .main-content { margin-left: var(--sidebar-width-collapsed); }
     .cards-grid { grid-template-columns: 1fr; }
 
 }
+
+
+  

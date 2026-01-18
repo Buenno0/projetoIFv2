@@ -13,8 +13,6 @@ class SugestoesController extends Controller
     {
         $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
 
-        // NÃO precisa mais de ->where('visible', true) ou escopo ->visiveis()
-        // O Laravel SoftDeletes já traz apenas as ativas por padrão.
         $query = Sugestao::query()->latest('created_at');
 
         if ($apenasNaoRespondidas) {
@@ -22,7 +20,7 @@ class SugestoesController extends Controller
         }
 
         $sugestoes = $query->limit(12)->get();
-        $totalGeral = Sugestao::count(); // Já conta apenas as não deletadas
+        $totalGeral = Sugestao::count(); 
 
         return view('dashboard.sugestoes', [
             'sugestoes' => $sugestoes,
@@ -31,7 +29,7 @@ class SugestoesController extends Controller
         ]);
     }
 
-    // Método de API (JSON)
+    // Método de API (JSON) para o AJAX
     public function indexJson(Request $request)
     {
         $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
@@ -66,11 +64,7 @@ class SugestoesController extends Controller
 
     public function destroy($id)
     {
-        // findOrFail: Se não achar (ou se já estiver deletado), retorna 404 automaticamente.
         $sugestao = Sugestao::findOrFail($id);
-
-        // AÇÃO: O Laravel vai preencher o deleted_at 
-        // e o Auditor vai registrar o evento 'deleted'.
         $sugestao->delete();
 
         return response()->json([
@@ -87,7 +81,6 @@ class SugestoesController extends Controller
             'email' => 'required|email',
         ]);
 
-        // Removemos o 'visible' => true, pois não existe mais a coluna
         $sugestao = Sugestao::create([
             'conteudo' => $request->sugestao,
             'nome' => $request->nome ?? 'Anônimo',
@@ -99,5 +92,45 @@ class SugestoesController extends Controller
             'message' => 'Sugestão adicionada com sucesso!',
             'data' => $sugestao,
         ]);
+    }
+
+    // --- NOVOS MÉTODOS PARA RESPOSTA ---
+
+    /**
+     * Exibe a tela de resposta (GET)
+     */
+    public function responder($id)
+    {
+        $sugestao = Sugestao::findOrFail($id);
+        
+
+        return view('dashboard.sugestoes.responder', compact('sugestao'));
+    }
+
+
+    public function update(Request $request, $id)
+    {
+        $sugestao = Sugestao::findOrFail($id);
+
+        $request->validate([
+            'resposta' => 'required|string|min:3',
+        ]);
+
+        // Preenche EXATAMENTE os campos da sua imagem
+        $sugestao->update([
+            'conteudo_resposta' => $request->resposta,
+            
+            'respondido'        => true,          // Coluna tinyint(1)
+            'data_resposta'     => now(),         // Coluna datetime
+            
+            'id_user_responded' => Auth::id(),    // Coluna bigint
+            'respondido_por'    => Auth::user()->name ?? 'Admin', // Coluna varchar(255)
+            'modificado_por'    => Auth::user()->name ?? 'Admin'  // Coluna varchar(255)
+        ]);
+
+        return redirect()
+            ->route('dashboard.sugestoes')
+            ->with('success', 'Resposta enviada e registrada com sucesso!');
+    
     }
 }
