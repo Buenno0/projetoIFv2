@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Sugestao;
 use App\Http\Resources\SugestaoResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SugestaoRespondida;
+use Illuminate\Support\Facades\Log;
 
 class SugestoesController extends Controller
 {
@@ -109,28 +112,41 @@ class SugestoesController extends Controller
 
 
     public function update(Request $request, $id)
-    {
-        $sugestao = Sugestao::findOrFail($id);
+{
+    $sugestao = Sugestao::findOrFail($id);
 
-        $request->validate([
-            'resposta' => 'required|string|min:3',
-        ]);
+    // 1. VALIDAÇÃO ROBUSTA
+    $request->validate([
+        'resposta' => 'required|string|min:10|max:5000',
+    ], [
+        'resposta.required' => 'Por favor, escreva uma resposta.',
+        'resposta.min'      => 'A resposta deve ser mais detalhada (mínimo de 10 caracteres).',
+        'resposta.max'      => 'A resposta é muito longa (máximo de 5000 caracteres).',
+    ]);
 
-        // Preenche EXATAMENTE os campos da sua imagem
-        $sugestao->update([
-            'conteudo_resposta' => $request->resposta,
-            
-            'respondido'        => true,          // Coluna tinyint(1)
-            'data_resposta'     => now(),         // Coluna datetime
-            
-            'id_user_responded' => Auth::id(),    // Coluna bigint
-            'respondido_por'    => Auth::user()->name ?? 'Admin', // Coluna varchar(255)
-            'modificado_por'    => Auth::user()->name ?? 'Admin'  // Coluna varchar(255)
-        ]);
+    // 2. ATUALIZAÇÃO (Igual ao anterior)
+    $sugestao->update([
+        'conteudo_resposta' => $request->resposta,
+        'respondido'        => true,
+        'data_resposta'     => now(),
+        'id_user_responded' => Auth::id(),
+        'respondido_por'    => Auth::user()->name ?? 'Admin',
+        'modificado_por'    => Auth::user()->name ?? 'Admin'
+    ]);
 
-        return redirect()
-            ->route('dashboard.sugestoes')
-            ->with('success', 'Resposta enviada e registrada com sucesso!');
-    
+    // Lógica de E-mail (Mantenha a que você já fez)
+    if (!empty($sugestao->email)) {
+        try {
+            \Illuminate\Support\Facades\Mail::to($sugestao->email)->send(new \App\Mail\SugestaoRespondida($sugestao));
+        } catch (\Exception $e) {
+            // Log silencioso se falhar
+        }
     }
+
+    // 3. RETORNO COM SESSÃO FLASH
+    return redirect()
+        ->route('sugestoes.responder', $id)
+        ->with('success', 'Resposta enviada com sucesso!');
+}
+
 }

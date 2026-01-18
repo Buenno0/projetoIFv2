@@ -12,7 +12,14 @@
     --bg-body: #F3F4F6;             /* Cinza fundo geral */
     --bg-sidebar: #FFFFFF;          /* Fundo Sidebar */
     --bg-card: #FFFFFF;             /* Fundo Cards */
-    
+
+    /* --- Cores de Alerta (Amarelo/Amber) --- */
+    --alert-color: #F59E0B;       /* Amarelo base vibrante (Ícones/Destaques) */
+    --alert-light: #FFFBEB;       /* Fundo amarelo muito claro (Background de cards) */
+    --alert-dark:  #92400E;       /* Texto escuro (Marrom dourado para leitura) */
+    --alert-border: #FCD34D;      /* Borda suave para separar elementos */
+    --alert-hover: #D97706;       /* Tom levemente mais escuro para interações */
+
     --text-main: #111827;           /* Quase preto */
     --text-muted: #6B7280;          /* Cinza médio */
     --hover-bg: #F9FAFB;            /* Cinza muito claro (Hover geral) */
@@ -646,5 +653,11 @@ body.collapsed .main-content { margin-left: var(--sidebar-width-collapsed); }
 
 }
 
+.fa-solid.fa-circle-check {
+    color: #10AC84;
+}
 
-  
+
+.fa-solid.fa-circle-xmark {
+    color: #EF4444;
+}

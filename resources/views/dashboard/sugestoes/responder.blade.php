@@ -3,6 +3,7 @@
 @section('title', 'Responder Sugestão #' . $sugestao->id)
 
 @section('content')
+
 <div class="dashboard-card animated-fade-in">
     
     <div class="dashboard-header">
@@ -30,7 +31,7 @@
                 <div>
                     <div class="user-name">{{ $sugestao->nome ?? 'Anônimo' }}</div>
                     <div class="meta-info">
-                        <i class="fa-regular fa-calendar"></i> {{ $sugestao->created_at->format('d/m/Y  H:i') }}
+                        <i class="fa-regular fa-calendar"></i> {{ $sugestao->created_at->format('d/m/Y H:i') }}
                         @if($sugestao->email)
                             <span class="dot-separator">•</span> {{ $sugestao->email }}
                         @endif
@@ -58,12 +59,12 @@
 
             @if($sugestao->respondido)
                 <div class="alert-box info">
-                    <i class="fa-solid fa-circle-info"></i>
-                    Esta sugestão já foi respondida em {{ $sugestao->data_resposta ? $sugestao->data_resposta->format('d/m/Y H:i') : 'Data não registrada' }}.
+                    <i class="fa-solid fa-circle-check"></i>
+                    Esta sugestão foi respondida em {{ $sugestao->data_resposta ? $sugestao->data_resposta->format('d/m/Y H:i') : '' }}.
                 </div>
                 
                 <div class="previous-response">
-                    <label>Resposta enviada:</label>
+                    <label>Conteúdo da Resposta:</label>
                     <div class="response-text">
                         {!! nl2br(e($sugestao->conteudo_resposta)) !!}
                     </div>
@@ -73,7 +74,17 @@
                     </div>
                 </div>
             @else
-                <form action="{{ route('sugestoes.update', $sugestao->id) }}" method="POST" id="form-responder">
+                @if ($errors->any())
+                    <div class="alert-box error" style="background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; margin-bottom: 15px;">
+                        <ul style="margin: 0; padding-left: 20px;">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form action="{{ route('sugestoes.update', $sugestao->id) }}" method="POST" id="form-responder" novalidate>
                     @csrf
                     @method('PUT')
 
@@ -83,21 +94,28 @@
                             name="resposta" 
                             id="resposta" 
                             rows="8" 
-                            class="form-control" 
+                            class="form-control {{ $errors->has('resposta') ? 'is-invalid' : '' }}" 
                             placeholder="Olá {{ $sugestao->nome ?? 'estudante' }}, agradecemos sua sugestão..."
-                            required></textarea>
+                            required
+                            minlength="10"></textarea>
+                        
+                        <div class="invalid-feedback" id="resposta-error" style="display:none; color: #dc2626; font-size: 0.85rem; margin-top: 5px;">
+                            A resposta precisa ter pelo menos 10 caracteres.
+                        </div>
                     </div>
 
-                    @if($sugestao->email)
-                    <div class="form-check">
-                        <input type="checkbox" id="enviar_email" name="enviar_email" checked>
-                        <label for="enviar_email">Notificar o usuário por e-mail</label>
+                    <div class="visibility-notice">
+                        <div class="notice-icon"><i class="fa-solid fa-eye"></i></div>
+                        <div class="notice-text">
+                            <strong>Atenção:</strong> Ao enviar, esta resposta ficará <u>pública no sistema</u> 
+                            @if($sugestao->email) e uma cópia será enviada para <b>{{ $sugestao->email }}</b>.@endif
+                        </div>
                     </div>
-                    @endif
 
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fa-solid fa-paper-plane"></i> Enviar Resposta
+                        <button type="submit" class="btn btn-primary btn-lg" id="btn-submit">
+                            <span class="btn-text"><i class="fa-solid fa-paper-plane"></i> Enviar Resposta</span>
+                            <span class="btn-loader" style="display: none;"><i class="fa-solid fa-circle-notch fa-spin"></i> Enviando...</span>
                         </button>
                     </div>
                 </form>
@@ -106,3 +124,89 @@
     </div>
 </div>
 @endsection
+
+
+@push('scripts')
+<script>
+    // Função global para exibir Toaster
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        
+        // Cria o elemento
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        const iconClass = type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark';
+        
+        toast.innerHTML = `
+            <i class="fa-solid ${iconClass}" style="font-size: 1.2rem;"></i>
+            <div class="toast-content">${message}</div>
+        `;
+        
+        container.appendChild(toast);
+        
+        // Anima entrada
+        requestAnimationFrame(() => {
+            toast.classList.add('show');
+        });
+        
+        // Remove após 4 segundos
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 400); // Espera animação de saída
+        }, 4000);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        
+        // 1. Verifica se existe mensagem de SUCESSO na sessão do Laravel
+        @if(session('success'))
+            showToast("{{ session('success') }}", 'success');
+        @endif
+
+        // 2. Lógica de validação do formulário
+        const form = document.getElementById('form-responder');
+        const textarea = document.getElementById('resposta');
+        const errorMsg = document.getElementById('resposta-error');
+        
+        if(form) {
+            // Remove erro ao digitar
+            textarea.addEventListener('input', function() {
+                if(this.value.length >= 10) {
+                    this.classList.remove('is-invalid');
+                    errorMsg.style.display = 'none';
+                }
+            });
+
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+                const valor = textarea.value.trim();
+
+                // Validação Customizada
+                if(valor.length < 10) {
+                    e.preventDefault(); // Impede envio
+                    textarea.classList.add('is-invalid');
+                    errorMsg.style.display = 'block';
+                    errorMsg.innerText = 'A resposta deve ter pelo menos 10 caracteres.';
+                    isValid = false;
+                    
+                    // Feedback visual de erro
+                    showToast('Corrija os erros antes de enviar.', 'error');
+                }
+
+                // Se estiver válido, ativa o loading
+                if(isValid) {
+                    const btn = document.getElementById('btn-submit');
+                    const btnText = btn.querySelector('.btn-text');
+                    const btnLoader = btn.querySelector('.btn-loader');
+
+                    btn.disabled = true;
+                    btnText.style.display = 'none';
+                    btnLoader.style.display = 'inline-block';
+                    // O form prossegue com o submit
+                }
+            });
+        }
+    });
+</script>
+@endpush

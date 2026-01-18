@@ -26,7 +26,7 @@ Route::get('/obrigado', function () {
     return response()->file(public_path('obrigado.html'));
 })->name('obrigado');
 
-// Sugestões
+// Sugestões (Público)
 Route::get('/sugestoes', [SugestoesController::class, 'show'])->name('sugestoes.show');
 Route::get('/sugestoes_user', [SugestoesController::class, 'create'])->name('sugestoes.create');
 Route::post('/sugestoes_user', [SugestoesController::class, 'store'])->name('sugestoes.store');
@@ -61,22 +61,18 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'showDashboard'])
         ->name('dashboard');
 
-    // Sugestões (Dashboard)
     Route::prefix('dashboard/sugestoes')->group(function () {
-        Route::get('/', [DashboardController::class, 'sugestoesDashboard'])->name('dashboard.sugestoes');
-        Route::get('/json', [SugestoesController::class, 'indexJson'])->name('dashboard.sugestoes.json');
         
-        Route::delete('/{id}', [SugestoesController::class, 'destroy'])->name('sugestoes.destroy');
-        // Rota para ABRIR a tela de resposta (GET)
-        Route::get('/dashboard/sugestoes/{id}/responder', [SugestoesController::class, 'responder'])
-    ->name('sugestoes.responder');
+        // URL Final: dashboard/sugestoes/
+        Route::get('/', [DashboardController::class, 'sugestoesDashboard'])->name('dashboard.sugestoes');
 
-// Rota para SALVAR a resposta (PUT/POST)
-Route::put('/dashboard/sugestoes/{id}', [SugestoesController::class, 'update'])
-    ->name('sugestoes.update');
+        Route::get('/json', [SugestoesController::class, 'indexJson'])->name('dashboard.sugestoes.json');
+        Route::delete('/{id}', [SugestoesController::class, 'destroy'])->name('sugestoes.destroy');
+        Route::get('/{id}/responder', [SugestoesController::class, 'responder'])->name('sugestoes.responder');
+        Route::put('/{id}', [SugestoesController::class, 'update'])->name('sugestoes.update');
     });
 
-    // Auditorias (Refatorado)
+    // Auditorias
     Route::prefix('dashboard/auditoria')->group(function () {
         Route::get('/', [AuditController::class, 'index'])->name('audits.index');
         Route::get('/download', [AuditController::class, 'download'])->name('audits.download');

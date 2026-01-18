@@ -127,3 +127,40 @@
     @media (max-width: 768px) {
         .response-container { grid-template-columns: 1fr; }
     }
+
+
+    
+   .visibility-notice {
+        margin-top: 15px;
+        /* Fundo amarelo bem claro */
+        background-color: var(--alert-light); 
+        /* Borda amarela suave */
+        border: 1px solid var(--alert-border); 
+        border-radius: 8px;
+        padding: 12px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        font-size: 0.9rem;
+        /* Texto escuro (Marrom/Dourado) para contraste */
+        color: var(--alert-dark); 
+    }
+
+    .notice-icon {
+        font-size: 1.2rem;
+        /* Ícone amarelo vibrante */
+        color: var(--alert-color); 
+    }
+
+    .notice-text u {
+        /* Sublinhado na mesma cor vibrante do ícone */
+        text-decoration-color: var(--alert-color); 
+        text-decoration-thickness: 2px;
+    }
+
+    /* Ajuste no botão para loading */
+    .btn-primary:disabled {
+        background-color: #94a3b8;
+        cursor: not-allowed;
+        transform: none !important;
+    }
