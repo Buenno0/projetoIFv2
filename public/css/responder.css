@@ -164,3 +164,78 @@
         cursor: not-allowed;
         transform: none !important;
     }
+
+  
+    .response-container {
+        align-items: stretch; 
+    }
+
+    /* 2. Força o card (caixa branca) a preencher 100% da altura da coluna do Grid */
+    .card-full-height {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start; /* Alinha tudo ao TOPO */
+    }
+
+    /* 3. Ajuste do container de texto */
+    .message-content {
+        margin-top: 0 !important;
+        text-align: left;
+        width: 100%;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    /* 4. Estilos do Admin (Azul) */
+    .admin-theme .avatar-circle {
+        background: var(--primary-color) !important;
+        color: #fff !important;
+    }
+    
+    .admin-theme .message-content {
+        border-left-color: var(--primary-color) !important;
+        background-color: #f8fafc;
+    }
+
+    .quote-icon {
+        color: #cbd5e1;
+        font-size: 1.1rem;
+        margin-top: 4px;
+        flex-shrink: 0;
+    }
+
+    /* 5. NOVO: Cabeçalho do Card (Título + Status na mesma linha) */
+    .section-header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px; /* Espaço para o avatar */
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 8px;
+    }
+
+    /* Removemos a margem/borda padrão da label antiga para usar no flex */
+    .section-header-row .section-label {
+        margin-bottom: 0;
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    /* Ajuste do form para ocupar altura total */
+    #form-responder {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+    #form-responder .form-group {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    #resposta {
+        flex-grow: 1;
+    }

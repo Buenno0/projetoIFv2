@@ -6,7 +6,8 @@
     --primary-color: #2E8B57;       /* Verde base (SeaGreen) */
     --primary-light: #E8F5E9;       /* Fundo verde bem claro (Active) */
     --primary-dark: #1F5F3A;        /* Verde escuro (Hover/Textos) */
-    --accent-color: #22c55e;        /* Verde vibrante para detalhes */
+    --accent-color: #22c55e;  
+    /* --primary-color: #148229;      Verde vibrante para detalhes */
     
     /* --- Cores Funcionais --- */
     --bg-body: #F3F4F6;             /* Cinza fundo geral */
@@ -656,6 +657,7 @@ body.collapsed .main-content { margin-left: var(--sidebar-width-collapsed); }
 .fa-solid.fa-circle-check {
     color: #10AC84;
 }
+
 
 
 .fa-solid.fa-circle-xmark {
