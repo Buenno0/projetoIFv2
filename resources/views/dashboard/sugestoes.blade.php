@@ -103,9 +103,9 @@
                                 <div class="status-badge" style="background:#fef3c7; color:#b45309; margin-bottom: 2px;">
                                     <i class="fa-solid fa-magnifying-glass"></i> Em Análise
                                 </div>
-                                {{-- <div style="font-size: 0.7rem; color: #b45309; font-weight: 600; display:flex; align-items:center; gap:3px; opacity: 0.9;">
+                                <div style="font-size: 0.7rem; color: #b45309; font-weight: 600; display:flex; align-items:center; gap:3px; opacity: 0.9;">
                                     <i class="fa-regular fa-clock" style="font-size:0.65rem;"></i> {{ $sugestao->tempo_decorrido ?? '< 24h' }}
-                                </div> --}}
+                                </div>
                             </div>
 
                                 @else
@@ -316,36 +316,33 @@
             }
 
             let badgeHtml = '';
+            let dateHtml = ''; // Nova variável para controlar o topo
             let isFinalized = false;
 
-            // --- ESTILOS VISUAIS ---
+            // --- 1. LÓGICA DO BADGE E DATA ---
             if (statusValue === 'respondida') {
                 isFinalized = true;
-                badgeHtml = `
-                    <div class="status-badge" style="background:#dcfce7; color:#166534;">
-                        <i class="fa-solid fa-check"></i> Respondida
-                    </div>`;
+                badgeHtml = `<div class="status-badge" style="background:#dcfce7; color:#166534;"><i class="fa-solid fa-check"></i> Respondida</div>`;
+                dateHtml = `<span>${item.created_at_formatado || item.created_at}</span>`; // Data normal
             
             } else if (statusValue === 'em_analise') {
                 const tempoTexto = item.tempo_decorrido || '< 24h';
-
-                // NOVO DESIGN: Container Flex Column
-                // O Badge fica em cima. O texto fica em baixo, pequeno e sem fundo.
-                badgeHtml = `
-                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                        <div class="status-badge" style="background:#fef3c7; color:#b45309; margin-bottom: 2px;">
-                            <i class="fa-solid fa-magnifying-glass"></i> Em Análise
-                        </div>
-                    </div>`;
+                
+                // Badge Limpo (Volta ao padrão simples)
+                badgeHtml = `<div class="status-badge" style="background:#fef3c7; color:#b45309;"><i class="fa-solid fa-magnifying-glass"></i> Em Análise</div>`;
+                
+                // Topo: Substitui a data pelo tempo decorrido com destaque
+                dateHtml = `
+                    <span style="color: #b45309; font-weight: 600; font-size: 0.9em; display: flex; align-items: center; gap: 5px;">
+                        <i class="fa-regular fa-clock"></i> Em análise: ${tempoTexto}
+                    </span>`;
             
             } else {
-                badgeHtml = `
-                    <div class="status-badge" style="background:#fee2e2; color:#991b1b;">
-                        <i class="fa-regular fa-clock"></i> Pendente
-                    </div>`;
+                badgeHtml = `<div class="status-badge" style="background:#fee2e2; color:#991b1b;"><i class="fa-regular fa-clock"></i> Pendente</div>`;
+                dateHtml = `<span>${item.created_at_formatado || item.created_at}</span>`; // Data normal
             }
 
-            // Botões de ação
+            // --- 2. BOTÕES DE AÇÃO ---
             let actionsHtml = '';
             if (isFinalized) {
                  actionsHtml = `
@@ -372,15 +369,13 @@
             card.innerHTML = `
                 <div class="card-top">
                     <span class="card-id">#${item.id}</span>
-                    <span>${item.created_at_formatado || item.created_at}</span>
+                    ${dateHtml}
                 </div>
                 <div class="card-body-text">${escapeHtml(item.conteudo.length > 140 ? item.conteudo.substring(0, 140) + '...' : item.conteudo)}</div>
                 <div class="card-footer">
                     <div class="author-info"><i class="fa-solid fa-user-circle" style="color:#cbd5e1;font-size:1.2rem;"></i> <span style="font-weight:600;color:#334155;">${escapeHtml(item.nome || 'Anônimo')}</span></div>
-                    
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
                         ${badgeHtml}
-                        
                         <div class="card-actions" style="flex-shrink: 0;">
                             ${actionsHtml}
                         </div>
