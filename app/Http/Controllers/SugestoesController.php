@@ -12,45 +12,92 @@ use Illuminate\Support\Facades\Log;
 
 class SugestoesController extends Controller
 {
-    public function index(Request $request)
-    {
-        $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
+    // public function index(Request $request)
+    // {
+    //     $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
 
-        $query = Sugestao::query()->latest('created_at');
+    //     $query = Sugestao::query()->latest('created_at');
 
-        if ($apenasNaoRespondidas) {
-            $query->naoRespondidas();
-        }
+    //     if ($apenasNaoRespondidas) {
+    //         $query->naoRespondidas();
+    //     }
 
-        $sugestoes = $query->limit(12)->get();
-        $totalGeral = Sugestao::count(); 
+    //     $sugestoes = $query->limit(12)->get();
+    //     $totalGeral = Sugestao::count(); 
 
-        return view('dashboard.sugestoes', [
-            'sugestoes' => $sugestoes,
-            'totalGeral' => $totalGeral,
-            'apenasNaoRespondidas' => $apenasNaoRespondidas,
-        ]);
-    }
+    //     return view('dashboard.sugestoes', [
+    //         'sugestoes' => $sugestoes,
+    //         'totalGeral' => $totalGeral,
+    //         'apenasNaoRespondidas' => $apenasNaoRespondidas,
+    //     ]);
+    // }
+
+    // public function indexJson(Request $request)
+    // {
+    //     $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
+    //     $perPage = max(1, (int) $request->input('per_page', 12));
+    //     $busca = trim((string) $request->input('q', ''));
+
+    //     $query = Sugestao::query()->latest('created_at');
+
+    //     if ($apenasNaoRespondidas) {
+    //         $query->naoRespondidas();
+    //     }
+
+    //     if ($busca !== '') {
+    //         $query->where(function($q) use ($busca) {
+    //             $q->where('conteudo', 'like', "%{$busca}%")
+    //               ->orWhere('nome', 'like', "%{$busca}%");
+    //         });
+    //     }
+
+    //     $paginator = $query->paginate($perPage);
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'data' => SugestaoResource::collection($paginator->items()),
+    //         'meta' => [
+    //             'current_page' => $paginator->currentPage(),
+    //             'total' => $paginator->total(),
+    //             'last_page' => $paginator->lastPage(),
+    //         ],
+    //     ]);
+    // }
 
     public function indexJson(Request $request)
     {
-        $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
         $perPage = max(1, (int) $request->input('per_page', 12));
-        $busca = trim((string) $request->input('q', ''));
+        $busca   = trim((string) $request->input('q', ''));
+        $status  = $request->input('status'); // 'pendente', 'em_analise', 'respondida'
+        $filtro  = $request->input('filtro'); // 'minhas', 'todas'
+        $ordem   = $request->input('order', 'desc'); // 'asc', 'desc'
 
-        $query = Sugestao::query()->latest('created_at');
+        $query = Sugestao::query();
 
-        if ($apenasNaoRespondidas) {
-            $query->naoRespondidas();
+        // 1. Filtro de Status Específico
+        if (!empty($status)) {
+            $query->where('status', $status);
         }
 
+        // 2. Filtro de "Minhas Análises" (Contexto do usuário logado)
+        if ($filtro === 'minhas') {
+            $query->where('id_user_analysing', Auth::id())
+                  ->where('status', 'em_analise');
+        }
+
+        // 3. Busca Textual
         if ($busca !== '') {
             $query->where(function($q) use ($busca) {
                 $q->where('conteudo', 'like', "%{$busca}%")
-                  ->orWhere('nome', 'like', "%{$busca}%");
+                  ->orWhere('nome', 'like', "%{$busca}%")
+                  ->orWhere('id', 'like', "%{$busca}%");
             });
         }
 
+        // 4. Ordenação
+        $query->orderBy('created_at', $ordem);
+
+        // Paginação
         $paginator = $query->paginate($perPage);
 
         return response()->json([
@@ -61,6 +108,21 @@ class SugestoesController extends Controller
                 'total' => $paginator->total(),
                 'last_page' => $paginator->lastPage(),
             ],
+        ]);
+    }
+    
+    // Atualize também o index principal para passar valores padrão se necessário
+    public function index(Request $request)
+    {
+        // Carrega apenas a contagem total inicial
+        $totalGeral = Sugestao::count(); 
+        // Não carregamos a lista aqui, pois o JS vai buscar via AJAX na carga da página
+        // mas passamos uma lista vazia ou a primeira página para o SEO/No-JS fallback se quiser
+        $sugestoes = Sugestao::latest()->paginate(12);
+
+        return view('dashboard.sugestoes', [
+            'sugestoes' => $sugestoes,
+            'totalGeral' => $totalGeral,
         ]);
     }
 

@@ -317,7 +317,60 @@
         justify-content: center;
         gap: 6px;
     }
+/* Badge Unificado Estilo "Pill" */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 50px;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    gap: 8px;
+}
 
+.status-pill.warning {
+    background-color: #fffbeb; /* Amarelo bem claro */
+    border: 1px solid #fcd34d; /* Borda sutil */
+    color: #92400e;
+}
+
+.status-pill .separator {
+    width: 1px;
+    height: 12px;
+    background-color: #d97706;
+    opacity: 0.3;
+}
+
+.status-pill .status-time {
+    font-feature-settings: "tnum"; /* Números monospaced para alinhar melhor */
+    opacity: 0.9;
+}
+
+        .badge-corner {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-corner.pendente { background: #fee2e2; color: #991b1b; }
+        .badge-corner.analise { background: #fef3c7; color: #b45309; }
+        .badge-corner.respondida { background: #dcfce7; color: #166534; }
+
+        /* Texto de User no rodapé */
+        .footer-user-info {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
     /* Toggle Switch */
     .toggle-wrapper { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--text-color); }
     .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
