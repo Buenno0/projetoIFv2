@@ -22,12 +22,9 @@ class DashboardController extends Controller
 
     public function sugestoesDashboard(Request $request)
     {
-        // Query Builder
         $sugestoes = Sugestao::visiveis()
             ->latest()
             ->when($request->boolean('apenas_nao_respondidas'), function ($query) {
-                // O escopo 'naoRespondidas' agora filtra status != 'respondida'
-                // ou seja, traz 'pendente' E 'em_analise'
                 $query->naoRespondidas();
             })
             ->paginate(12)
