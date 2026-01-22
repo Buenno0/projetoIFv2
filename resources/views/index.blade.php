@@ -6,7 +6,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Painel - Feedback</title>
 
-    <!-- CSS principal -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 </head>
 <body>
@@ -18,7 +17,6 @@
         <h1>Queremos ouvir <span>você!</span></h1>
 
         <div class="buttons">
-            <!-- Botão Críticas -->
             <a href="{{ url('criticas') }}">
                 <button class="btn">
                     <img src="{{ asset('assets/critica.svg') }}" alt="Críticas">
@@ -26,23 +24,18 @@
                 </button>
             </a>
 
-            <!-- Botão Sugestões -->
             <a href="{{ url('sugestoes') }}">
                 <button class="btn">
                     <img src="{{ asset('assets/sugestoes.svg') }}" alt="Sugestões">
                     Sugestões
                 </button>
             </a>
-
-            <!-- Botão Contatos -->
             <a href="{{ url('contatos') }}">
                 <button class="btn">
                     <img src="{{ asset('assets/contatos.svg') }}" alt="Contatos">
                     Contatos
                 </button>
             </a>
-
-            <!-- Botão Avaliações -->
             <a href="{{ url('feedback') }}">
                 <button class="btn">
                     <img src="{{ asset('assets/avaliacoes.svg') }}" alt="Avaliações">
@@ -50,7 +43,6 @@
                 </button>
             </a>
 
-            <!-- Form de denúncia -->
             <form id="denuncia-form" method="POST" action="{{ url('/save_denuncia') }}">
                 @csrf
                 <button type="submit" class="btn" id="denuncia-btn">
@@ -61,7 +53,6 @@
         </div>
     </div>
 
-    <!-- Script para envio e redirecionamento da denúncia -->
     <script>
         document.getElementById('denuncia-form').addEventListener('submit', function(event) {
             event.preventDefault();
