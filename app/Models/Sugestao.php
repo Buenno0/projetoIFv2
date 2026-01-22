@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class Sugestao extends Model implements Auditable
 {
@@ -20,18 +21,20 @@ class Sugestao extends Model implements Auditable
         'conteudo',
         'nome',
         'email',
-        'respondido',        // tinyint
-        'data_resposta',     // datetime
-        'id_user_responded', // bigint
-        'respondido_por',    // varchar
-        'id_user_deleted',   // bigint
-        'modificado_por',    // varchar
-        'conteudo_resposta'  // text
+        'status',
+        'data_resposta',
+        'data_analise',
+        'id_user_responded',
+        'id_user_analysing',
+        'respondido_por',
+        'id_user_deleted',
+        'modificado_por',
+        'conteudo_resposta'
     ];
 
     protected $casts = [
-        'respondido' => 'boolean',
         'data_resposta' => 'datetime',
+        'data_analise'  => 'datetime',
     ];
 
     protected static function booted()
@@ -44,17 +47,60 @@ class Sugestao extends Model implements Auditable
         });
     }
 
-    /* * CORREÇÃO DO ERRO: 
-     * Adicionamos de volta o escopo, mesmo que vazio, para não quebrar o Controller.
-     */
     public function scopeVisiveis($query)
     {
-        return $query; // O SoftDeletes já filtra automaticamente
+        return $query;
     }
 
     public function scopeNaoRespondidas($query)
     {
-        // Baseado no seu banco (tinyint 0 ou 1)
-        return $query->where('respondido', false); 
+        return $query->where('status', '!=', 'respondida');
+    }
+
+    public function usuarioQueAnalisou()
+    {
+        return $this->belongsTo(User::class, 'id_user_analysing');
+    }
+
+    public function usuarioQueRespondeu()
+    {
+        return $this->belongsTo(User::class, 'id_user_responded');
+    }
+
+    public function getTempoDecorridoAttribute()
+    {
+        // ... (verificações iniciais iguais) ...
+        $statusAtual = is_object($this->status) ? $this->status->value : $this->status;
+
+        if (!$this->data_analise || $statusAtual !== 'em_analise') {
+            return null;
+        }
+
+        $inicio = Carbon::parse($this->data_analise);
+        $agora = Carbon::now();
+        
+        $dias = $inicio->diffInDays($agora);
+        $horas = $inicio->diffInHours($agora);
+
+        // TEXTOS MAIS CURTOS E LIMPOS
+        if ($horas < 24) {
+            return '< 24h'; // Ou "Recente"
+        }
+
+        if ($dias == 1) {
+            return '1 dia';
+        }
+
+        if ($dias < 7) {
+            return "{$dias} dias";
+        }
+
+        if ($dias < 30) {
+            $semanas = floor($dias / 7);
+            return $semanas == 1 ? '1 sem' : "{$semanas} sem";
+        }
+
+        $meses = floor($dias / 30);
+        return $meses == 1 ? '1 mês' : "{$meses} meses";
     }
 }

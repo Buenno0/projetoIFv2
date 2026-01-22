@@ -311,8 +311,10 @@
         padding: 6px 12px;
         border-radius: 20px;
         font-weight: 700;
+        height: auto;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 6px;
     }
 

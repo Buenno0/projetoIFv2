@@ -32,7 +32,6 @@ class SugestoesController extends Controller
         ]);
     }
 
-    // Método de API (JSON) para o AJAX
     public function indexJson(Request $request)
     {
         $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
@@ -84,6 +83,7 @@ class SugestoesController extends Controller
             'email' => 'required|email',
         ]);
 
+        // Criação padrão (o banco já define status = 'pendente' pelo default)
         $sugestao = Sugestao::create([
             'conteudo' => $request->sugestao,
             'nome' => $request->nome ?? 'Anônimo',
@@ -97,56 +97,78 @@ class SugestoesController extends Controller
         ]);
     }
 
-    // --- NOVOS MÉTODOS PARA RESPOSTA ---
+    // --- MÉTODOS DE RESPOSTA ATUALIZADOS ---
 
     /**
      * Exibe a tela de resposta (GET)
+     * Lógica: Se o admin abrir a sugestão e ela estiver 'pendente',
+     * muda automaticamente para 'em_analise'.
      */
     public function responder($id)
     {
         $sugestao = Sugestao::findOrFail($id);
-        
+        $sugestao = Sugestao::with(['usuarioQueAnalisou', 'usuarioQueRespondeu'])->findOrFail($id);
 
         return view('dashboard.sugestoes.responder', compact('sugestao'));
     }
 
+    public function iniciarAnalise($id)
+    {
+        $sugestao = Sugestao::findOrFail($id);
 
-    public function update(Request $request, $id)
-{
-    $sugestao = Sugestao::findOrFail($id);
+        // Só muda se estiver pendente (para não sobrescrever se outro já pegou)
+        if ($sugestao->status === 'pendente' || (is_object($sugestao->status) && $sugestao->status->value === 'pendente')) {
+            
+            $sugestao->update([
+                'status' => 'em_analise',
+                'id_user_analysing' => Auth::id(), // Pega o usuário logado
+                'data_analise' => now(),
+            ]);
 
-    // 1. VALIDAÇÃO ROBUSTA
-    $request->validate([
-        'resposta' => 'required|string|min:10|max:5000',
-    ], [
-        'resposta.required' => 'Por favor, escreva uma resposta.',
-        'resposta.min'      => 'A resposta deve ser mais detalhada (mínimo de 10 caracteres).',
-        'resposta.max'      => 'A resposta é muito longa (máximo de 5000 caracteres).',
-    ]);
-
-    // 2. ATUALIZAÇÃO (Igual ao anterior)
-    $sugestao->update([
-        'conteudo_resposta' => $request->resposta,
-        'respondido'        => true,
-        'data_resposta'     => now(),
-        'id_user_responded' => Auth::id(),
-        'respondido_por'    => Auth::user()->name ?? 'Admin',
-        'modificado_por'    => Auth::user()->name ?? 'Admin'
-    ]);
-
-    // Lógica de E-mail (Mantenha a que você já fez)
-    if (!empty($sugestao->email)) {
-        try {
-            \Illuminate\Support\Facades\Mail::to($sugestao->email)->send(new \App\Mail\SugestaoRespondida($sugestao));
-        } catch (\Exception $e) {
-            // Log silencioso se falhar
+            return redirect()->route('sugestoes.responder', $id)
+                ->with('success', 'Você assumiu a análise desta sugestão.');
         }
+
+        return redirect()->route('sugestoes.responder', $id)
+            ->with('error', 'Esta sugestão já está em análise ou finalizada.');
     }
 
-    // 3. RETORNO COM SESSÃO FLASH
-    return redirect()
-        ->route('sugestoes.responder', $id)
-        ->with('success', 'Resposta enviada com sucesso!');
-}
+    public function update(Request $request, $id)
+    {
+        $sugestao = Sugestao::findOrFail($id);
 
+        // 1. VALIDAÇÃO
+        $request->validate([
+            'resposta' => 'required|string|min:10|max:5000',
+        ], [
+            'resposta.required' => 'Por favor, escreva uma resposta.',
+            'resposta.min'      => 'A resposta deve ser mais detalhada (mínimo de 10 caracteres).',
+            'resposta.max'      => 'A resposta é muito longa (máximo de 5000 caracteres).',
+        ]);
+
+        // 2. ATUALIZAÇÃO FINAL
+        $sugestao->update([
+            'conteudo_resposta' => $request->resposta,
+            'status'            => 'respondida', // Atualiza status final
+            'data_resposta'     => now(),
+            'id_user_responded' => Auth::id(),
+            'respondido_por'    => Auth::user()->name ?? 'Admin',
+            'modificado_por'    => Auth::user()->name ?? 'Admin'
+        ]);
+
+        // Lógica de E-mail
+        if (!empty($sugestao->email)) {
+            try {
+                // Certifique-se de que a Mailable SugestaoRespondida está pronta para lidar com os novos campos se necessário
+                Mail::to($sugestao->email)->send(new SugestaoRespondida($sugestao));
+            } catch (\Exception $e) {
+                Log::error("Erro ao enviar email de sugestão respondida: " . $e->getMessage());
+            }
+        }
+
+        // 3. RETORNO
+        return redirect()
+            ->route('sugestoes.responder', $id)
+            ->with('success', 'Resposta enviada com sucesso!');
+    }
 }

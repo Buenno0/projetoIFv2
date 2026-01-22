@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Sugestao; // Importação limpa
+use App\Models\Sugestao;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    /**
-     * Exibe a página inicial do dashboard.
-     */
     public function showDashboard()
     {
         return view('dashboard.index', [
@@ -18,30 +15,24 @@ class DashboardController extends Controller
         ]);
     }
 
-    /**
-     * Exibe o gráfico de relatórios.
-     */
     public function reportChart()
     {
         return view('dashboard.report-chart');
     }
 
-    /**
-     * Exibe e filtra a lista de sugestões.
-     */
     public function sugestoesDashboard(Request $request)
     {
-        // 1. Query Builder Fluido
+        // Query Builder
         $sugestoes = Sugestao::visiveis()
-            ->latest() // Atalho para order by created_at desc
+            ->latest()
             ->when($request->boolean('apenas_nao_respondidas'), function ($query) {
-                // Usa o escopo que criamos no Model (reutilização de código)
+                // O escopo 'naoRespondidas' agora filtra status != 'respondida'
+                // ou seja, traz 'pendente' E 'em_analise'
                 $query->naoRespondidas();
             })
-            ->paginate(12) // Resolve o erro do "Collection::total"
-            ->withQueryString(); // Mantém os filtros na URL ao mudar de página
+            ->paginate(12)
+            ->withQueryString();
 
-        // 2. Contagem separada (apenas visíveis)
         $totalGeral = Sugestao::visiveis()->count();
 
         return view('dashboard.sugestoes', [
@@ -52,13 +43,9 @@ class DashboardController extends Controller
         ]);
     }
 
-    /**
-     * Helper privado para definir a saudação baseada na hora.
-     */
     private function getGreeting(): string
     {
         $hour = Carbon::now()->hour;
-
         return match (true) {
             $hour < 12 => 'Bom dia',
             $hour < 18 => 'Boa tarde',

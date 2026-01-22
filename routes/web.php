@@ -70,6 +70,8 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', [SugestoesController::class, 'destroy'])->name('sugestoes.destroy');
         Route::get('/{id}/responder', [SugestoesController::class, 'responder'])->name('sugestoes.responder');
         Route::put('/{id}', [SugestoesController::class, 'update'])->name('sugestoes.update');
+        // Adicione esta linha junto com suas outras rotas de sugestões
+        Route::post('/sugestoes/{id}/iniciar-analise', [SugestoesController::class, 'iniciarAnalise'])->name('sugestoes.iniciar_analise');
     });
 
     // Auditorias
