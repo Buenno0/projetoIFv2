@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class SugestaoRespondida extends Mailable
+class SugestaoRespondida extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -22,9 +22,6 @@ class SugestaoRespondida extends Mailable
         $this->sugestao = $sugestao;
     }
 
-    /**
-     * Define a view e o assunto do e-mail.
-     */
     public function build()
     {
         return $this

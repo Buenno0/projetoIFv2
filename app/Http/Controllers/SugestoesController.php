@@ -9,60 +9,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\SugestaoRespondida;
 use Illuminate\Support\Facades\Log;
+use Appp\Mail\SugestaoEmAnalise;
 
 class SugestoesController extends Controller
 {
-    // public function index(Request $request)
-    // {
-    //     $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
-
-    //     $query = Sugestao::query()->latest('created_at');
-
-    //     if ($apenasNaoRespondidas) {
-    //         $query->naoRespondidas();
-    //     }
-
-    //     $sugestoes = $query->limit(12)->get();
-    //     $totalGeral = Sugestao::count(); 
-
-    //     return view('dashboard.sugestoes', [
-    //         'sugestoes' => $sugestoes,
-    //         'totalGeral' => $totalGeral,
-    //         'apenasNaoRespondidas' => $apenasNaoRespondidas,
-    //     ]);
-    // }
-
-    // public function indexJson(Request $request)
-    // {
-    //     $apenasNaoRespondidas = $request->boolean('apenas_nao_respondidas');
-    //     $perPage = max(1, (int) $request->input('per_page', 12));
-    //     $busca = trim((string) $request->input('q', ''));
-
-    //     $query = Sugestao::query()->latest('created_at');
-
-    //     if ($apenasNaoRespondidas) {
-    //         $query->naoRespondidas();
-    //     }
-
-    //     if ($busca !== '') {
-    //         $query->where(function($q) use ($busca) {
-    //             $q->where('conteudo', 'like', "%{$busca}%")
-    //               ->orWhere('nome', 'like', "%{$busca}%");
-    //         });
-    //     }
-
-    //     $paginator = $query->paginate($perPage);
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'data' => SugestaoResource::collection($paginator->items()),
-    //         'meta' => [
-    //             'current_page' => $paginator->currentPage(),
-    //             'total' => $paginator->total(),
-    //             'last_page' => $paginator->lastPage(),
-    //         ],
-    //     ]);
-    // }
 
     public function indexJson(Request $request)
     {
@@ -167,7 +117,7 @@ class SugestoesController extends Controller
         return view('dashboard.sugestoes.responder', compact('sugestao'));
     }
 
-    public function iniciarAnalise($id)
+   public function iniciarAnalise($id)
     {
         $sugestao = Sugestao::findOrFail($id);
 
@@ -179,8 +129,20 @@ class SugestoesController extends Controller
                 'data_analise' => now(),
             ]);
 
+            // --- NOVO CÓDIGO: Enviar E-mail de "Em Análise" ---
+            if (!empty($sugestao->email)) {
+                try {
+                    // Usa a nova classe de email criada
+                    Mail::to($sugestao->email)->send(new \App\Mail\SugestaoEmAnalise($sugestao));
+                } catch (\Exception $e) {
+                    // Loga o erro mas não para o fluxo (o usuário não precisa saber que o email falhou)
+                    Log::error("Erro ao enviar email de início de análise: " . $e->getMessage());
+                }
+            }
+            // --------------------------------------------------
+
             return redirect()->route('sugestoes.responder', $id)
-                ->with('success', 'Você assumiu a análise desta sugestão.');
+                ->with('success', 'Você assumiu a análise desta sugestão. O aluno foi notificado.');
         }
 
         return redirect()->route('sugestoes.responder', $id)
