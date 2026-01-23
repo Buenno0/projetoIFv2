@@ -38,7 +38,7 @@
         <ul class="nav-list">
             
             <li class="nav-item">
-                <a href="{{route('dashboard.sugestoes')}}" class="nav-link">
+                <a href="{{route('dashboard')}}" class="nav-link">
                     <span class="nav-icon"><i class="ph ph-squares-four"></i></span>
                     <span class="nav-text">Dashboard</span>
                     <span class="tooltip">Dashboard</span>
@@ -53,7 +53,7 @@
                 </a>
                 <ul class="submenu">
                     <li>
-                        <a href="#" class="nav-link">
+                        <a href="{{ route('dashboard.sugestoes') }}" class="nav-link">
                             <span class="nav-icon"><i class="ph ph-thumbs-up"></i></span>
                             <span class="nav-text">Sugestões</span>
                         </a>

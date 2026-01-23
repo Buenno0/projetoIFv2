@@ -91,7 +91,7 @@
                         <div>
                             <div class="user-name">{{ $sugestao->respondido_por ?? 'Equipe de Suporte' }}</div>
                             <div class="meta-info">
-                                <span style="color: var(--primary-color); font-weight: 600;">Staff</span>
+                                <span style="color: var(--primary-color); font-weight: 600;">{{ $cargoRespondente }}</span>
                                 <span class="dot-separator">•</span>
                                 <i class="fa-regular fa-calendar-check"></i> 
                                 {{ $sugestao->data_resposta ? $sugestao->data_resposta->format('d/m/Y H:i') : '' }}

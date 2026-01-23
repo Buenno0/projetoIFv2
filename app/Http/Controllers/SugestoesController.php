@@ -110,12 +110,17 @@ class SugestoesController extends Controller
     }
 
     public function responder($id)
-    {
-        $sugestao = Sugestao::findOrFail($id);
-        $sugestao = Sugestao::with(['usuarioQueAnalisou', 'usuarioQueRespondeu'])->findOrFail($id);
+{
+    // O 'with' já carrega os relacionamentos para evitar N+1 queries
+    $sugestao = Sugestao::with(['usuarioQueAnalisou', 'usuarioQueRespondeu'])->findOrFail($id);
 
-        return view('dashboard.sugestoes.responder', compact('sugestao'));
-    }
+    // Acessando os cargos (utilize o operador ?-> para evitar erros caso seja null)
+    $cargoAnalista = $sugestao->usuarioQueAnalisou?->role;
+    $cargoRespondente = $sugestao->usuarioQueRespondeu?->role;
+
+    // Você pode passar para a view
+    return view('dashboard.sugestoes.responder', compact('sugestao', 'cargoAnalista', 'cargoRespondente'));
+}
 
    public function iniciarAnalise($id)
     {

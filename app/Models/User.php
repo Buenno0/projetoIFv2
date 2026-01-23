@@ -19,7 +19,7 @@ class User extends Authenticatable implements AuditableContract
     // 1. USE SIMPLES (Sem conflitos, pois mudamos o nome na Trait)
     use Auditable, AuditoriaAvancada;
 
-    protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = ['name', 'email', 'password', 'role'];
     protected $hidden = ['password', 'remember_token'];
     protected $casts = ['email_verified_at' => 'datetime'];
     protected $auditExclude = ['password', 'remember_token'];

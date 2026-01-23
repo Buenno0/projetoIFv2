@@ -3,31 +3,6 @@
 @section('title', 'Sugestões Recebidas')
 
 @section('content')
-    {{-- ESTILOS (CSS) --}}
-    <style>
-        /* Badges */
-        .badge-corner { padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .badge-corner.pendente { background: #fee2e2; color: #991b1b; }
-        .badge-corner.analise { background: #fef3c7; color: #b45309; }
-        .badge-corner.respondida { background: #dcfce7; color: #166534; }
-        .footer-user-info { font-size: 0.8rem; color: #64748b; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-
-        /* Barra de Filtros Moderna */
-        .modern-filter-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; background: #fff; padding: 16px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px; border: 1px solid #f1f5f9; }
-        .input-wrapper, .search-container { position: relative; display: flex; align-items: center; }
-        .icon-absolute { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; font-size: 0.9rem; z-index: 2; }
-        
-        .modern-select { appearance: none; -webkit-appearance: none; padding: 10px 36px 10px 36px; font-size: 0.9rem; font-weight: 600; color: #475569; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; transition: all 0.2s; min-width: 160px; }
-        .modern-select:hover { background-color: #f1f5f9; border-color: #cbd5e1; }
-        .modern-select:focus { outline: none; border-color: #6366f1; background-color: #fff; }
-        
-        .search-container { flex-grow: 1; min-width: 250px; }
-        .modern-input { width: 100%; padding: 10px 12px 10px 38px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; font-weight: 500; color: #334155; transition: all 0.2s; }
-        .modern-input:focus { outline: none; background: #fff; border-color: #6366f1; }
-        
-        .input-wrapper::after { content: '\f078'; font-family: 'Font Awesome 6 Free'; font-weight: 900; position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; font-size: 0.8rem; }
-        .filter-separator { height: 24px; width: 1px; background: #e2e8f0; margin: 0 4px; }
-    </style>
 
     <div class="dashboard-card" style="background: transparent; box-shadow: none; padding: 0;">
         
