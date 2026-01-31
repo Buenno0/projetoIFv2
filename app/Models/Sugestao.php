@@ -17,11 +17,27 @@ class Sugestao extends Model implements Auditable
 
     protected $table = 'sugestoes';
 
+    // Categorias pré-definidas para classificação pelo admin
+    public const CATEGORIAS = [
+        'infraestrutura' => 'Infraestrutura',
+        'ensino' => 'Ensino',
+        'biblioteca' => 'Biblioteca',
+        'alimentacao' => 'Alimentação',
+        'seguranca' => 'Segurança',
+        'tecnologia' => 'Tecnologia',
+        'acessibilidade' => 'Acessibilidade',
+        'eventos' => 'Eventos e Cultura',
+        'administrativo' => 'Administrativo',
+        'esportes' => 'Esportes e Lazer',
+        'outros' => 'Outros',
+    ];
+
     protected $fillable = [
         'conteudo',
         'nome',
         'email',
         'status',
+        'categoria',
         'data_resposta',
         'data_analise',
         'id_user_responded',

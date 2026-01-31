@@ -160,14 +160,18 @@ class SugestoesController extends Controller
 
         $request->validate([
             'resposta' => 'required|string|min:10|max:5000',
+            'categoria' => 'required|string|in:' . implode(',', array_keys(Sugestao::CATEGORIAS)),
         ], [
             'resposta.required' => 'Por favor, escreva uma resposta.',
             'resposta.min'      => 'A resposta deve ser mais detalhada (mínimo de 10 caracteres).',
             'resposta.max'      => 'A resposta é muito longa (máximo de 5000 caracteres).',
+            'categoria.required' => 'Por favor, selecione uma categoria.',
+            'categoria.in'       => 'Categoria inválida.',
         ]);
 
         $sugestao->update([
             'conteudo_resposta' => $request->resposta,
+            'categoria'         => $request->categoria,
             'status'            => 'respondida', // Atualiza status final
             'data_resposta'     => now(),
             'id_user_responded' => Auth::id(),

@@ -17,6 +17,8 @@ class SugestaoResource extends JsonResource
             'nome' => $this->nome ?? 'Anônimo',
             'email' => $this->email,
             'status' => $statusValue,
+            'categoria' => $this->categoria,
+            'categoria_label' => $this->categoria ? (\App\Models\Sugestao::CATEGORIAS[$this->categoria] ?? $this->categoria) : null,
             'tempo_decorrido' => $this->tempo_decorrido, // Seu accessor criado antes
 
             // DATAS
